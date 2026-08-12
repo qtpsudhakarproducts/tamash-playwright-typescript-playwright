@@ -15,7 +15,7 @@ export default defineConfig({
   retries: process.env.CI ? 2 : 0,
   reporter: 'html',
   use: {
-    baseURL: process.env.APP_BASE_URL ?? 'https://vibetestq-osondemand.orangehrm.com/',
+    baseURL: process.env.APP_BASE_URL ?? 'https://qtpsudhakar-vibetestq-hrm.up.railway.app/',
     trace: 'on-first-retry',
 
     /* Actions fail fast so the self-healer has real time left within the overall test
