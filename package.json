@@ -1,0 +1,20 @@
+{
+  "name": "tamash-playwright-typescript-playwright",
+  "version": "1.0.0",
+  "description": "Example usage of tamash-playwright with the native Playwright Test runner (TypeScript), with and without the Page Object Model.",
+  "scripts": {
+    "test": "playwright test",
+    "test:headed": "playwright test --headed",
+    "report": "playwright show-report"
+  },
+  "license": "ISC",
+  "type": "commonjs",
+  "devDependencies": {
+    "@playwright/test": "^1.62.1",
+    "@types/node": "^24.0.0",
+    "dotenv": "^16.0.1"
+  },
+  "dependencies": {
+    "tamash-playwright": "^0.4.0"
+  }
+}
