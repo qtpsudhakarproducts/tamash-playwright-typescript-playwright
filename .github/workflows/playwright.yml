@@ -8,6 +8,14 @@ jobs:
   test:
     timeout-minutes: 60
     runs-on: ubuntu-latest
+    env:
+      # Self-healing config — plain values, nothing sensitive here.
+      HEALER_ENABLED: true
+      HEALER_PROVIDER: ollama
+      OLLAMA_MODEL: gpt-oss:120b
+      APP_BASE_URL: https://qtpsudhakar-vibetestq-hrm.up.railway.app/
+      # The actual credential — set via `gh secret set OLLAMA_API_KEY`, never committed.
+      OLLAMA_API_KEY: ${{ secrets.OLLAMA_API_KEY }}
     steps:
     - uses: actions/checkout@v4
     - uses: actions/setup-node@v4
