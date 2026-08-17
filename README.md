@@ -93,7 +93,7 @@ That's all that's required — `HEALER_PROVIDER=ollama` and `OLLAMA_MODEL=gpt-os
 npx tamash-playwright doctor
 ```
 
-It confirms the configured provider/API key actually work, reports whether vision fallback and action recovery are available, and scans `tests/` for locators missing `.describe()` labels or defined inline instead of in a page object.
+It confirms the configured provider/API key actually work, checks that `playwright.config.ts` has `actionTimeout` set well below the test `timeout` (see `playwright.config.ts` in this repo for the pattern — without it, a broken locator can retry silently for the whole test timeout and self-healing never gets a turn), reports whether vision fallback and action recovery are available, and scans `tests/` for locators missing `.describe()` labels or defined inline instead of in a page object.
 
 ### 4. Run the tests
 
