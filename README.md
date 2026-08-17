@@ -111,6 +111,17 @@ Both specs log in to the hosted OrangeHRM demo using a selector that no longer m
 
 The test then continues and passes. Run `npm run report` to see the same detail as an annotation on the test, plus a JSON attachment with the full healing record (provider, tokens used, suggested selector, and exactly which file/line the original locator came from).
 
+### 5. Turning a heal into a real code fix
+
+Runtime healing above fixes things for that one run only — it doesn't touch this repo's source. To make a heal permanent:
+
+```bash
+npx tamash-playwright apply-heals --dry-run   # preview the fix
+npx tamash-playwright apply-heals             # write it
+```
+
+This repo's CI ([.github/workflows/playwright.yml](.github/workflows/playwright.yml)) does this automatically after every push to `main`/`master`: it uploads whatever got healed as an artifact, then a separate `apply-heals` job downloads it, applies the fix on a fresh branch, **re-runs the suite against just that fix (with healing turned off, to prove the fix works on its own)**, and only then opens a PR — labeled with whether verification passed or failed either way. Nothing gets committed without a human looking at the diff first. See the "Running `apply-heals` in CI" section of [tamash-playwright's own README](https://www.npmjs.com/package/tamash-playwright) for the general pattern, including how it scales to sharded test suites.
+
 ## Using `tamash-playwright` in your own project
 
 Adopting it takes one import change — everything else about how you write Playwright tests stays the same:
