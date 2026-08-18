@@ -53,6 +53,13 @@ jobs:
     if: ${{ !cancelled() && github.event_name == 'push' }}
     runs-on: ubuntu-latest
     timeout-minutes: 60
+    # Two pushes close together would otherwise race on the same tamash-playwright/apply-heals
+    # branch/PR — whichever push finished last could clobber the other mid-update. Queues instead
+    # (never cancels an in-progress run) so each one always starts from a clean, fully-finished
+    # state and checks out master fresh at that point, rather than fighting over the same ref.
+    concurrency:
+      group: apply-heals-${{ github.ref }}
+      cancel-in-progress: false
     permissions:
       contents: write
       pull-requests: write
@@ -171,6 +178,12 @@ jobs:
     needs: [test, apply-heals]
     if: ${{ !cancelled() && github.event_name == 'push' }}
     runs-on: ubuntu-latest
+    # GitHub's own recommended group name for Pages deployments — only one deploy can be in
+    # flight at a time regardless of which workflow/job triggers it, so two close-together runs
+    # queue rather than racing to publish the "latest" site.
+    concurrency:
+      group: pages
+      cancel-in-progress: false
     permissions:
       pages: write
       id-token: write
