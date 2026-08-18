@@ -98,6 +98,7 @@ jobs:
         HEALER_ENABLED: false
         APP_BASE_URL: https://qtpsudhakar-vibetestq-hrm.up.railway.app/
     - name: Upload verification report
+      id: upload-verification-report
       if: steps.check.outputs.changed == 'true' && !cancelled()
       uses: actions/upload-artifact@v4
       with:
@@ -118,8 +119,9 @@ jobs:
           if [ "${{ steps.verify.outcome }}" = "success" ]; then
             echo "**Verification run (healing disabled): ✅ all tests passed with these selectors on their own.**"
           else
-            echo "**Verification run (healing disabled): ⚠️ one or more tests failed — see the \`apply-heals-verification-report\` artifact on this workflow run before merging.**"
+            echo "**Verification run (healing disabled): ⚠️ one or more tests failed — review carefully before merging.**"
           fi
+          echo "[Full test execution report](${{ steps.upload-verification-report.outputs.artifact-url }}) (HTML, with traces/screenshots — sign-in to GitHub required to download)"
           echo ""
           echo "Review each change against the real page before merging — these are AI-suggested replacements for selectors that broke."
           echo ""
