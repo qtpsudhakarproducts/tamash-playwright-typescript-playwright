@@ -9,7 +9,7 @@ class AddEmployeePage extends BasePage {
         super(page);
         this.txtFirstName = page.getByPlaceholder("First Name").describe("First Name Textbox");
         // Intentionally broken placeholder ("Last Name1") to demonstrate self-healing recovery.
-        this.txtLastName = page.getByPlaceholder("Last Name1").describe("Last Name Textbox");
+        this.txtLastName = page.getByRole("textbox", { name: "Last Name" }).describe("Last Name Textbox");
         this.btnSave = page.getByRole('button', { name: 'Save' }).describe("Save Button");
     }
 

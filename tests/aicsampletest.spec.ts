@@ -7,7 +7,7 @@ test('Login test using CSS selectors', async ({ page }) => {
     await page.goto("/");
 
     // Intentionally broken selector ("username1") to demonstrate self-healing recovery.
-    let txtUserName = page.locator('input[name="username1"]').describe("User Name Textbox");
+    let txtUserName = page.getByRole("textbox", { name: "Username" }).describe("User Name Textbox");
     await txtUserName.fill("testadmin");
 
     let txtPassword = page.locator("input[placeholder='Password']").describe("Password Textbox");
