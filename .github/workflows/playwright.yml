@@ -1,7 +1,10 @@
 name: Playwright Tests
 on:
+  # No branch filter here on purpose — people push and heal on their own feature branches too,
+  # not just main/master. apply-heals below opens its PR against whichever branch triggered the
+  # run (see that job's checkout/branch naming), and publish-report is separately restricted to
+  # main/master only, since the public Pages site should reflect the trunk, not every feature push.
   push:
-    branches: [ main, master ]
   pull_request:
     branches: [ main, master ]
 jobs:
@@ -43,12 +46,15 @@ jobs:
         retention-days: 7
 
   apply-heals:
-    # Only after a push to main/master — not on pull_request runs, which can come from forks with
-    # a read-only GITHUB_TOKEN (so they couldn't open a PR anyway), and where "open a PR to fix
-    # this still-open PR" isn't a sensible flow. Runs are always sequenced through main here since
-    # this repo doesn't shard (playwright.config.ts intentionally runs single-worker against the
-    # shared OrangeHRM demo), but the --logs-dir merge below is written to scale to sharded suites
-    # too — see the "Running apply-heals in CI" section of tamash-playwright's own README.
+    # Only on push — not on pull_request runs, which can come from forks with a read-only
+    # GITHUB_TOKEN (so they couldn't open a PR anyway), and where "open a PR to fix this still-open
+    # PR" isn't a sensible flow. Runs on ANY branch, not just main/master — checkout below follows
+    # whichever branch triggered the run, and the heal branch/PR is named after that source branch
+    # (see "Open PR with healed selectors") so it targets that same branch, not main/master. Runs
+    # are always sequenced single-shard here since this repo doesn't shard (playwright.config.ts
+    # intentionally runs single-worker against the shared OrangeHRM demo), but the --logs-dir merge
+    # below is written to scale to sharded suites too — see the "Running apply-heals in CI" section
+    # of tamash-playwright's own README.
     needs: test
     if: ${{ !cancelled() && github.event_name == 'push' }}
     runs-on: ubuntu-latest
@@ -153,14 +159,19 @@ jobs:
     # is right and something else was flaky), it just gets an honest label instead of a silent
     # false-positive. The job below still fails the run itself when verification failed, so CI
     # status stays truthful even though the PR was opened for review.
+    # branch/base default to whatever ref this job checked out (github.ref_name) — no explicit
+    # base: is set, so the PR targets the source branch itself, not main/master. The branch name
+    # is suffixed per source ref so two different branches healing at the same time never fight
+    # over the same physical heal branch (each source branch gets its own tamash-playwright/apply-
+    # heals-<branch> line; the concurrency group above only serializes runs on the *same* ref).
     - name: Open PR with healed selectors
       if: steps.check.outputs.changed == 'true'
       uses: peter-evans/create-pull-request@v6
       with:
         commit-message: "fix: apply self-healed selectors from CI"
-        title: "Apply self-healed selectors (verification ${{ steps.verify.outcome == 'success' && 'passed' || 'FAILED' }})"
+        title: "Apply self-healed selectors on ${{ github.ref_name }} (verification ${{ steps.verify.outcome == 'success' && 'passed' || 'FAILED' }})"
         body-path: .tamash-playwright/pr-body.md
-        branch: tamash-playwright/apply-heals
+        branch: tamash-playwright/apply-heals-${{ github.ref_name }}
         delete-branch: true
 
     - name: Fail the job if verification didn't pass
@@ -173,10 +184,12 @@ jobs:
   # sign-in or zip download required, unlike the raw CI artifacts. Latest-run only for now (each
   # deploy replaces the previous one); real per-run history would mean switching Pages' source
   # from "deploy via workflow" to an accumulating gh-pages branch, which is a bigger change than
-  # this needs to start with.
+  # this needs to start with. Restricted to main/master pushes — unlike apply-heals, this is a
+  # single shared public site, so a feature-branch push shouldn't overwrite it with that branch's
+  # report.
   publish-report:
     needs: [test, apply-heals]
-    if: ${{ !cancelled() && github.event_name == 'push' }}
+    if: ${{ !cancelled() && github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master') }}
     runs-on: ubuntu-latest
     # GitHub's own recommended group name for Pages deployments — only one deploy can be in
     # flight at a time regardless of which workflow/job triggers it, so two close-together runs
