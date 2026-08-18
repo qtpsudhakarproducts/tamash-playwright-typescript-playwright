@@ -207,9 +207,15 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
+    # Needed so compose-report-page.sh (checked into this repo) actually exists in the workspace —
+    # this job otherwise only downloads artifacts and clones the separate history branch into
+    # _site below, neither of which brings the repo's own scripts along.
+    - uses: actions/checkout@v4
+
     # report-history is storage-only, never configured as this repo's actual Pages source. Cloned
-    # via a token-authenticated URL (rather than actions/checkout + ref:) because checkout errors
-    # out if the branch doesn't exist yet, which is exactly the state on the very first run.
+    # via a token-authenticated URL into _site (rather than actions/checkout + ref:, which errors
+    # out if the branch doesn't exist yet — exactly the state on the very first run) so it doesn't
+    # collide with the source checkout above, which lives at the workspace root.
     - name: Checkout report-history branch
       run: |
         if git clone --depth 1 --branch report-history \
