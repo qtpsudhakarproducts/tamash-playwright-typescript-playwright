@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>tamash-playwright self-healing report</title>
+<style>
+  :root { color-scheme: light dark; }
+  body { font-family: -apple-system, "Segoe UI", Roboto, sans-serif; max-width: 860px; margin: 2.5rem auto; padding: 0 1.25rem; line-height: 1.55; }
+  h1 { font-size: 1.5rem; }
+  h2 { font-size: 1.15rem; margin-top: 2.5rem; border-bottom: 1px solid #8883; padding-bottom: 0.4rem; }
+  .meta { color: #888; font-size: 0.85rem; }
+  .button { display: inline-block; background: #2563eb; color: #fff; text-decoration: none; padding: 0.55rem 1rem; border-radius: 6px; font-size: 0.9rem; }
+  .button:hover { background: #1d4ed8; }
+  .muted { color: #888; }
+  .fixes { display: grid; gap: 0.9rem; margin-top: 1rem; }
+  .fix { border: 1px solid #8883; border-radius: 8px; padding: 0.9rem 1.1rem; }
+  .fix h3 { margin: 0 0 0.6rem; font-size: 0.9rem; font-family: ui-monospace, monospace; font-weight: 600; }
+  .fix p { margin: 0.3rem 0; font-size: 0.85rem; }
+  .fix span { display: inline-block; width: 4.5em; color: #888; font-size: 0.75rem; text-transform: uppercase; }
+  .fix code { font-family: ui-monospace, monospace; }
+  .before code { color: #b91c1c; }
+  .after code { color: #15803d; }
+  .history-list { padding-left: 1.2rem; }
+  .history-list li { margin: 0.25rem 0; font-size: 0.85rem; }
+  .history-list a { font-family: ui-monospace, monospace; }
+  .history-list .current { color: #888; }
+</style>
+</head>
+<body>
+<h1>tamash-playwright self-healing report</h1>
+<p class="meta">Run <a href="https://github.com/qtpsudhakarproducts/tamash-playwright-typescript-playwright/actions/runs/32119661831">#20</a> &middot; commit <code>d49db7460fdaa384a230881b9ab11e7ac585106a</code> &middot; 2026-08-18 09:08 UTC</p>
+
+<h2>1. Initial execution (healing enabled)</h2>
+<a class="button" href="history/00020-d49db74/initial-run/index.html">Open the initial test report &rarr;</a>
+<p class="muted">The real run &mdash; broken locators healed live by the AI as the suite executed.</p>
+
+<h2>2. Healing report</h2>
+<p>4 fix(es) applied, 0 skipped.</p><div class="fixes"><article class="fix"><h3>tests/aicsampletest.spec.ts:10</h3><p class="before"><span>before</span><code>.locator(&apos;input[name=&quot;username1&quot;]&apos;)</code></p><p class="after"><span>after</span><code>.getByRole(&quot;textbox&quot;, { name: &quot;Username&quot; })</code></p></article>
+<article class="fix"><h3>src/pages/loginpage.ts:11</h3><p class="before"><span>before</span><code>.getByPlaceholder(&quot;Username1&quot;)</code></p><p class="after"><span>after</span><code>.getByRole(&quot;textbox&quot;, { name: &quot;Username&quot; })</code></p></article>
+<article class="fix"><h3>src/pages/addemppage.ts:12</h3><p class="before"><span>before</span><code>.getByPlaceholder(&quot;Last Name1&quot;)</code></p><p class="after"><span>after</span><code>.getByRole(&quot;textbox&quot;, { name: &quot;Last Name&quot; })</code></p></article>
+<article class="fix"><h3>tests/sampletest.spec.ts:9</h3><p class="before"><span>before</span><code>.locator(&apos;input[name=&quot;xyz&quot;]&apos;)</code></p><p class="after"><span>after</span><code>.getByRole(&quot;textbox&quot;, { name: &quot;Username&quot; })</code></p></article></div>
+
+<h2>3. Post-healing execution (healing disabled)</h2>
+<a class="button" href="history/00020-d49db74/post-healing-run/index.html">Open the post-healing test report &rarr;</a><p class="muted">Same suite, re-run with <code>HEALER_ENABLED=false</code> &mdash; proves the applied fixes work standalone, not just with the AI safety net still on.</p>
+<h2>Past runs</h2><ul class="history-list"><li><span class="current">00020-d49db74 (this run)</span></li></ul>
+</body>
+</html>
