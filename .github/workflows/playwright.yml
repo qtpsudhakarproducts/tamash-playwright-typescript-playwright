@@ -180,123 +180,88 @@ jobs:
         echo "::error::Applied selector fixes did not pass verification — a PR was still opened for review, but check it carefully before merging."
         exit 1
 
-  # Publishes a single browsable page combining all three reports from this run — no GitHub
-  # sign-in or zip download required, unlike the raw CI artifacts. Latest-run only for now (each
-  # deploy replaces the previous one); real per-run history would mean switching Pages' source
-  # from "deploy via workflow" to an accumulating gh-pages branch, which is a bigger change than
-  # this needs to start with. Restricted to main/master pushes — unlike apply-heals, this is a
-  # single shared public site, so a feature-branch push shouldn't overwrite it with that branch's
-  # report.
+  # Publishes a browsable page combining all three reports from this run, plus every past run's
+  # report under history/<run>/ — no GitHub sign-in or zip download required, unlike the raw CI
+  # artifacts. The report-history branch is pure storage (never a real Pages "source" in GitHub's
+  # settings — Pages here is still "deploy via workflow"): each run checks it out, adds its own
+  # snapshot, pushes it back, and deploys the whole accumulated tree as the site. Restricted to
+  # main/master pushes — unlike apply-heals, this is a single shared public site, so a
+  # feature-branch push shouldn't overwrite it with that branch's report.
   publish-report:
     needs: [test, apply-heals]
     if: ${{ !cancelled() && github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master') }}
     runs-on: ubuntu-latest
     # GitHub's own recommended group name for Pages deployments — only one deploy can be in
     # flight at a time regardless of which workflow/job triggers it, so two close-together runs
-    # queue rather than racing to publish the "latest" site.
+    # queue rather than racing to publish the "latest" site (and racing to push report-history).
     concurrency:
       group: pages
       cancel-in-progress: false
     permissions:
+      # contents: write is for pushing this run's snapshot to the report-history branch — separate
+      # from and unrelated to the pages/id-token permissions used for the actual Pages deployment.
+      contents: write
       pages: write
       id-token: write
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
+    # report-history is storage-only, never configured as this repo's actual Pages source. Cloned
+    # via a token-authenticated URL (rather than actions/checkout + ref:) because checkout errors
+    # out if the branch doesn't exist yet, which is exactly the state on the very first run.
+    - name: Checkout report-history branch
+      run: |
+        if git clone --depth 1 --branch report-history \
+            "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git" _site 2>/dev/null; then
+          echo "Found existing report-history branch."
+        else
+          echo "No report-history branch yet — starting one."
+          mkdir -p _site
+          git -C _site init -q -b report-history
+          git -C _site remote add origin "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git"
+        fi
+        git -C _site config user.name "github-actions[bot]"
+        git -C _site config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
     - name: Download initial execution report
       uses: actions/download-artifact@v4
       with:
         name: playwright-report
-        path: _site/initial-run
+        path: run-data/initial-run
 
     - name: Download healing report
       uses: actions/download-artifact@v4
       with:
         name: healing-report
-        path: healing-report
+        path: run-data/healing-report
       # Doesn't exist when apply-heals found nothing to fix this run — the common case, not a
-      # failure. The page-composition step below handles that absence explicitly.
+      # failure. compose-report-page.sh handles that absence explicitly.
       continue-on-error: true
 
     - name: Download post-healing verification report
       uses: actions/download-artifact@v4
       with:
         name: apply-heals-verification-report
-        path: _site/post-healing-run
+        path: run-data/post-healing-run
       continue-on-error: true
 
+    # Pulled into its own file rather than inlined — a heredoc's closing delimiter has to sit at
+    # column 0 to be recognized unless using tab-only indentation (<<-), which conflicts with this
+    # file's space-indented YAML block scalar. See the script's own header for more.
     - name: Compose report page
+      run: bash .github/scripts/compose-report-page.sh
+
+    - name: Commit report history
+      working-directory: _site
       run: |
-        HEALED_COUNT=0
-        SKIPPED_COUNT=0
-        FIXES_HTML=""
-        if [ -f healing-report/apply-heals-report.json ]; then
-          HEALED_COUNT=$(jq '[.fixes[] | select(.applied)] | length' healing-report/apply-heals-report.json)
-          SKIPPED_COUNT=$(jq '[.fixes[] | select(.applied | not)] | length' healing-report/apply-heals-report.json)
-          FIXES_HTML=$(jq -r '.fixes[] | select(.applied) |
-            "<article class=\"fix\"><h3>" + (.file | @html) + ":" + (.line | tostring) + "</h3>" +
-            "<p class=\"before\"><span>before</span><code>" + (.before | @html) + "</code></p>" +
-            "<p class=\"after\"><span>after</span><code>" + (.after | @html) + "</code></p></article>"
-          ' healing-report/apply-heals-report.json)
+        git add -A
+        if git diff --cached --quiet; then
+          echo "No history changes to commit."
+        else
+          git commit -q -m "Archive report for run #${{ github.run_number }} (${{ github.sha }})"
+          git push -q origin HEAD:report-history
         fi
-
-        POST_HEALING_SECTION="<p class=\"muted\">No healing was needed this run, so there's no post-healing verification to show.</p>"
-        if [ -d _site/post-healing-run ] && [ "$(ls -A _site/post-healing-run 2>/dev/null)" ]; then
-          POST_HEALING_SECTION="<a class=\"button\" href=\"post-healing-run/index.html\">Open the post-healing test report →</a><p class=\"muted\">Same suite, re-run with <code>HEALER_ENABLED=false</code> — proves the applied fixes work standalone, not just with the AI safety net still on.</p>"
-        fi
-
-        HEALING_SECTION="<p class=\"muted\">No selectors needed healing on this run.</p>"
-        if [ "$HEALED_COUNT" -gt 0 ]; then
-          HEALING_SECTION="<p>$HEALED_COUNT fix(es) applied, $SKIPPED_COUNT skipped.</p><div class=\"fixes\">$FIXES_HTML</div>"
-        fi
-
-        # Built with individual echo statements rather than a heredoc — a heredoc's closing
-        # delimiter has to sit at column 0 to be recognized unless using tab-only indentation
-        # (<<-), which conflicts with this file's space-indented YAML block scalar. This avoids
-        # that whole class of bug (a mismatched delimiter just hangs/breaks the step).
-        {
-          echo '<!doctype html>'
-          echo '<html lang="en">'
-          echo '<head>'
-          echo '<meta charset="utf-8">'
-          echo '<meta name="viewport" content="width=device-width, initial-scale=1">'
-          echo '<title>tamash-playwright self-healing report</title>'
-          echo '<style>'
-          echo '  :root { color-scheme: light dark; }'
-          echo '  body { font-family: -apple-system, "Segoe UI", Roboto, sans-serif; max-width: 860px; margin: 2.5rem auto; padding: 0 1.25rem; line-height: 1.55; }'
-          echo '  h1 { font-size: 1.5rem; }'
-          echo '  h2 { font-size: 1.15rem; margin-top: 2.5rem; border-bottom: 1px solid #8883; padding-bottom: 0.4rem; }'
-          echo '  .meta { color: #888; font-size: 0.85rem; }'
-          echo '  .button { display: inline-block; background: #2563eb; color: #fff; text-decoration: none; padding: 0.55rem 1rem; border-radius: 6px; font-size: 0.9rem; }'
-          echo '  .button:hover { background: #1d4ed8; }'
-          echo '  .muted { color: #888; }'
-          echo '  .fixes { display: grid; gap: 0.9rem; margin-top: 1rem; }'
-          echo '  .fix { border: 1px solid #8883; border-radius: 8px; padding: 0.9rem 1.1rem; }'
-          echo '  .fix h3 { margin: 0 0 0.6rem; font-size: 0.9rem; font-family: ui-monospace, monospace; font-weight: 600; }'
-          echo '  .fix p { margin: 0.3rem 0; font-size: 0.85rem; }'
-          echo '  .fix span { display: inline-block; width: 4.5em; color: #888; font-size: 0.75rem; text-transform: uppercase; }'
-          echo '  .fix code { font-family: ui-monospace, monospace; }'
-          echo '  .before code { color: #b91c1c; }'
-          echo '  .after code { color: #15803d; }'
-          echo '</style>'
-          echo '</head>'
-          echo '<body>'
-          echo '<h1>tamash-playwright self-healing report</h1>'
-          echo "<p class=\"meta\">Run <a href=\"${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}\">#${{ github.run_number }}</a> &middot; commit <code>${{ github.sha }}</code> &middot; $(date -u +"%Y-%m-%d %H:%M UTC")</p>"
-          echo ''
-          echo '<h2>1. Initial execution (healing enabled)</h2>'
-          echo '<a class="button" href="initial-run/index.html">Open the initial test report &rarr;</a>'
-          echo '<p class="muted">The real run &mdash; broken locators healed live by the AI as the suite executed.</p>'
-          echo ''
-          echo '<h2>2. Healing report</h2>'
-          echo "$HEALING_SECTION"
-          echo ''
-          echo '<h2>3. Post-healing execution (healing disabled)</h2>'
-          echo "$POST_HEALING_SECTION"
-          echo '</body>'
-          echo '</html>'
-        } > _site/index.html
 
     - uses: actions/configure-pages@v5
     - uses: actions/upload-pages-artifact@v3
