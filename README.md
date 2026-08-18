@@ -16,8 +16,9 @@ It's a drop-in replacement for Playwright's own `test`/`expect` imports — you 
 
 ```
 tests/
-  sampletest.spec.ts   # No Page Object Model — locators declared directly in the test body
-  pomtest.spec.ts      # Page Object Model — page objects injected as fixtures
+  sampletest.spec.ts      # No Page Object Model — imports test/expect straight from tamash-playwright, locator declared in the test body
+  aicsampletest.spec.ts   # No Page Object Model — imports the fixture-based `test` from src/fixture/basetest, locator declared in the test body
+  pomtest.spec.ts         # Page Object Model — page objects injected as fixtures
 src/
   pages/                # Page object classes: BasePage, LoginPage, DashboardPage, PIMPage, AddEmployeePage, PersonalDetailsPage
   fixture/basetest.ts   # Extends tamash-playwright's `test` with the page object fixtures above
@@ -25,9 +26,10 @@ playwright.config.ts     # Points baseURL at the hosted OrangeHRM demo
 .env.example             # Template for self-healing configuration
 ```
 
-The two spec files show the same package used two different ways:
+The three spec files show the same package used a few different ways:
 
-- **`sampletest.spec.ts`** — the quickest way to see self-healing: `page.locator(...)` calls written straight in the test, one of them intentionally broken.
+- **`sampletest.spec.ts`** — the quickest way to see self-healing: `test`/`expect` imported directly from `tamash-playwright`, with a `page.locator(...)` call written straight in the test body, intentionally broken.
+- **`aicsampletest.spec.ts`** — same inline-locator style, but built on the fixture-based `test` from `src/fixture/basetest` instead — useful if your project already needs page-object fixtures elsewhere but still wants some tests with locators declared inline.
 - **`pomtest.spec.ts`** — a more realistic setup, where locators live inside page object classes (`src/pages/`) and are exposed to tests as fixtures via `src/fixture/basetest.ts`.
 
 ## Step-by-step: run this example yourself
@@ -120,7 +122,15 @@ npx tamash-playwright apply-heals --dry-run   # preview the fix
 npx tamash-playwright apply-heals             # write it
 ```
 
-This repo's CI ([.github/workflows/playwright.yml](.github/workflows/playwright.yml)) does this automatically after every push to `main`/`master`: it uploads whatever got healed as an artifact, then a separate `apply-heals` job downloads it, applies the fix on a fresh branch, **re-runs the suite against just that fix (with healing turned off, to prove the fix works on its own)**, and only then opens a PR — labeled with whether verification passed or failed either way. Nothing gets committed without a human looking at the diff first. See the "Running `apply-heals` in CI" section of [tamash-playwright's own README](https://www.npmjs.com/package/tamash-playwright) for the general pattern, including how it scales to sharded test suites.
+This repo's CI ([.github/workflows/playwright.yml](.github/workflows/playwright.yml)) does this automatically on every push, on any branch: it uploads whatever got healed as an artifact, then a separate `apply-heals` job downloads it, applies the fix on a fresh branch, **re-runs the suite against just that fix (with healing turned off, to prove the fix works on its own)**, and only then opens a PR against whichever branch you pushed to — labeled with whether verification passed or failed either way. Nothing gets committed without a human looking at the diff first. See the "Running `apply-heals` in CI" section of [tamash-playwright's own README](https://www.npmjs.com/package/tamash-playwright) for the general pattern, including how it scales to sharded test suites.
+
+### 6. Browsing past runs
+
+Pushes to `main`/`master` additionally publish a combined report to GitHub Pages:
+
+**[qtpsudhakarproducts.github.io/tamash-playwright-typescript-playwright](https://qtpsudhakarproducts.github.io/tamash-playwright-typescript-playwright/)**
+
+For the latest run, it shows the initial test execution (healing enabled), exactly what got healed (before/after selectors for each fix), and a second execution with healing turned off to prove the fix works standalone. Every past run stays browsable too, under the "Past runs" list on the same page — nothing gets overwritten, so you can see how the suite's selectors have drifted and healed over time.
 
 ## Using `tamash-playwright` in your own project
 
