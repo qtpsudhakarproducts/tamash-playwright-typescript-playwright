@@ -5,8 +5,11 @@ import path from 'path';
 dotenv.config({ path: path.resolve(__dirname, '.env') });
 
 export default defineConfig({
-  timeout: 120000,
+  timeout: 80000,
   testDir: './tests',
+  expect: {
+    timeout: 10000,
+  },
   /* The shared hosted OrangeHRM demo doesn't tolerate concurrent form submissions well —
    * run tests serially to keep the example deterministic. */
   fullyParallel: false,
