@@ -15,6 +15,6 @@
     "dotenv": "^16.0.1"
   },
   "dependencies": {
-    "tamash-playwright": "^0.7.0-beta.6"
+    "tamash-playwright": "^0.7.0-beta.7"
   }
 }
