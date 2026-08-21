@@ -8,7 +8,7 @@ class LoginPage extends BasePage {
     constructor(page: Page) {
         super(page);
         // Intentionally broken placeholder ("Username1") to demonstrate self-healing recovery.
-        this.txtUserName = page.getByRole("textbox", { name: "Username" }).describe("Username Textbox");
+        this.txtUserName = page.getByPlaceholder("Username1").describe("Username Textbox");
         this.txtPassword = page.getByPlaceholder("Password").describe("Password Textbox");
         this.btnLogin = page.getByRole('button', { name: 'Login' }).describe("Login Button");
     }
