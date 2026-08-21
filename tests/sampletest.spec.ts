@@ -2,13 +2,13 @@ import { test,expect } from 'tamash-playwright';
 
 // Non-POM example: locators are declared directly inside the test body.
 
-test('login test using CSS Selectors', async ({ page }) => {
+test('login test using CSS Selectors', { tag: "@sample" }, async ({ page }) => {
     
     // Navigate to Application
     await page.goto("https://vibetestq-osondemand.orangehrm.com/auth/login");
    
     // using page.locator() method to locate the username input field and fill it
-    let txtUserName = page.getByRole("textbox", { name: "xyz" }).describe("User Name Textbox")
+    let txtUserName = page.getByRole("textbox", { name: "Username" }).describe("User Name Textbox")
     await txtUserName.fill("testadmin");
 
     // using page.fill() method to locate the password input field and fill it
@@ -38,7 +38,7 @@ test('login test using CSS Selectors', async ({ page }) => {
     await txtLastName.fill("Doe");
 
     // Enter Employee ID
-    let txtEmployeeId = page.getByPlaceholder("Employee").describe("Employee Id Textbox");
+    let txtEmployeeId = page.getByText("Employee Id").locator("xpath=../..").getByRole("textbox").describe("Employee Id Textbox");
 
     //create a random number between 10000 and 99999
     let randomNumber = Math.floor(Math.random() * (99999 - 10000 + 1)) + 10000;
