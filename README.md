@@ -2,7 +2,7 @@
 
 A worked example of [`tamash-playwright`](https://www.npmjs.com/package/tamash-playwright) — a plug-and-play, AI-powered self-healing add-on for Playwright — used with the **native Playwright Test** runner in TypeScript, both **with** and **without** the Page Object Model.
 
-Tests run against a live, publicly hosted [OrangeHRM](https://www.orangehrm.com/) demo instance and include an intentionally broken selector (a username field renamed from `"username"` to `"username1"`) so you can watch `tamash-playwright` detect the failure, ask an AI model where the element actually went, and recover the test automatically — no retry logic or maintenance required from you.
+Tests run against a live, publicly hosted [OrangeHRM](https://www.orangehrm.com/) demo instance. Each of the three spec styles below includes its own intentionally broken username-field selector — a different locator style each time (CSS attribute, ARIA role, placeholder) — so you can watch `tamash-playwright` detect the failure, ask an AI model where the element actually went, and recover the test automatically, regardless of which locator style you use — no retry logic or maintenance required from you.
 
 ## What `tamash-playwright` does
 
@@ -105,10 +105,18 @@ npm run test:headed   # watch it run in a real browser window
 npm run report         # open the HTML report after a run
 ```
 
-Both specs log in to the hosted OrangeHRM demo using a selector that no longer matches the page (`input[name="username1"]`). Watch the console: instead of failing immediately, you'll see something like
+All three specs log in to the hosted OrangeHRM demo using a username-field selector that no longer matches the page — a different locator style broken in each, on purpose:
+
+| Spec | Broken locator |
+| --- | --- |
+| `pomtest.spec.ts` (via `src/pages/loginpage.ts`) | `getByPlaceholder("Username1")` |
+| `sampletest.spec.ts` | `getByRole("textbox", { name: "xyz" })` |
+| `aicsampletest.spec.ts` | `locator('input[name="username1"]')` |
+
+Watch the console: instead of failing immediately, you'll see something like
 
 ```
-[self-healer] src/pages/loginpage.ts:11 — locator.fill "User Name Textbox" -> HEALED [provider=ollama:gpt-oss:120b, vision=no, actionRecovery=no, suggested="role:textbox:Username", 620 tokens (489 input + 131 output)] — locator.fill: Timeout 8000ms exceeded.
+[self-healer] src/pages/loginpage.ts:11 — locator.fill "Username Textbox" -> HEALED [provider=ollama:gpt-oss:120b, vision=no, actionRecovery=no, suggested="role:textbox:Username", 620 tokens (489 input + 131 output)] — locator.fill: Timeout 8000ms exceeded.
 ```
 
 The test then continues and passes. Run `npm run report` to see the same detail as an annotation on the test, plus a JSON attachment with the full healing record (provider, tokens used, suggested selector, and exactly which file/line the original locator came from).
