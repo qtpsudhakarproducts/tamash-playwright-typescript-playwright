@@ -5,7 +5,7 @@ import { test,expect } from 'tamash-playwright';
 test('login test using CSS Selectors', { tag: "@sample" }, async ({ page }) => {
     
     // Navigate to Application
-    await page.goto("https://vibetestq-osondemand.orangehrm.com/auth/login");
+    await page.goto("https://qtpsudhakar-vibetestq-hrm.up.railway.app/");
    
     // using page.locator() method to locate the username input field and fill it
     let txtUserName = page.getByRole("textbox", { name: "Username" }).describe("User Name Textbox")
