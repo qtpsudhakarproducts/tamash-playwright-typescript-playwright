@@ -13,12 +13,17 @@ jobs:
     runs-on: ubuntu-latest
     env:
       # Self-healing config — plain values, nothing sensitive here.
+      # Temporarily testing claude-subscription (a Claude Pro/Max/Team/Enterprise subscription via
+      # CLAUDE_CODE_OAUTH_TOKEN, no API key) end-to-end in CI — see tamash-playwright's own README,
+      # "Using your Claude or GitHub Copilot subscription instead of an API key".
       HEALER_ENABLED: true
-      HEALER_PROVIDER: ollama
-      OLLAMA_MODEL: gpt-oss:120b
+      HEALER_PROVIDER: claude-subscription
+      CLAUDE_SUBSCRIPTION_MODEL: haiku
       APP_BASE_URL: https://qtpsudhakar-vibetestq-hrm.up.railway.app/
-      # The actual credential — set via `gh secret set OLLAMA_API_KEY`, never committed.
-      OLLAMA_API_KEY: ${{ secrets.OLLAMA_API_KEY }}
+      # The actual credential — minted via `claude setup-token`, set as a repo secret, never
+      # committed. Unlike an API key, this draws on the subscription itself, not pay-per-token
+      # billing.
+      CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
     steps:
     - uses: actions/checkout@v4
     - uses: actions/setup-node@v4
