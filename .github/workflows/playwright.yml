@@ -11,23 +11,24 @@ jobs:
   test:
     timeout-minutes: 60
     runs-on: ubuntu-latest
-    # copilot-requests: write is what lets copilot-subscription authenticate with the ambient
-    # GITHUB_TOKEN below instead of a separate secret — see tamash-playwright's own README, "Using
-    # your Claude or GitHub Copilot subscription instead of an API key".
     permissions:
       contents: read
-      copilot-requests: write
     env:
       # Self-healing config — plain values, nothing sensitive here.
-      # Temporarily testing copilot-subscription (a GitHub Copilot subscription/free tier via the
-      # ambient GITHUB_TOKEN, no API key) end-to-end in CI.
+      # Temporarily testing copilot-subscription end-to-end in CI. The ambient GITHUB_TOKEN +
+      # copilot-requests: write approach (GitHub's documented default) doesn't work here — this
+      # repo is owned by the qtpsudhakarproducts ORG, which doesn't itself have Copilot enabled,
+      # even though the qtpsudhakar personal account does. So this uses a fine-grained PAT instead,
+      # created under the personal account (Resource owner: qtpsudhakar, Public Repositories
+      # read-only, Account permissions > Copilot Requests: Read) and set as the COPILOT_GITHUB_TOKEN
+      # env var, which the Copilot SDK checks ahead of GITHUB_TOKEN in its auth precedence — so it
+      # carries the personal account's own Copilot entitlement regardless of which org's repo runs
+      # the workflow.
       HEALER_ENABLED: true
       HEALER_PROVIDER: copilot-subscription
       COPILOT_SUBSCRIPTION_MODEL: mai-code-1-flash-picker
       APP_BASE_URL: https://qtpsudhakar-vibetestq-hrm.up.railway.app/
-      # No repo secret needed — the copilot-requests: write permission above is what grants this
-      # job's own GITHUB_TOKEN Copilot access.
-      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      COPILOT_GITHUB_TOKEN: ${{ secrets.COPILOT_GITHUB_TOKEN }}
     steps:
     - uses: actions/checkout@v4
     - uses: actions/setup-node@v4
