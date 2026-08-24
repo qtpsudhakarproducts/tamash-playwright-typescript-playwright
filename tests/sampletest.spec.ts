@@ -41,7 +41,7 @@ test('login test using CSS Selectors', { tag: "@sample" }, async ({ page }) => {
     // Deliberately broken (no placeholder actually exists on this field) — temporary, to exercise
     // a real self-heal via claude-subscription in CI. Revert to the xpath-based locator above once
     // that's confirmed.
-    let txtEmployeeId = page.getByPlaceholder("Employee").describe("Employee Id Textbox");
+    let txtEmployeeId = page.getByText("Employee Id").locator("xpath=../..").getByRole("textbox").describe("Employee Id Textbox");
 
     //create a random number between 10000 and 99999
     let randomNumber = Math.floor(Math.random() * (99999 - 10000 + 1)) + 10000;
