@@ -1,4 +1,4 @@
-import { fTest as test } from '../src/fixture/basetest';
+import { test } from '../src/fixture/basetest';
 
 // Page Object Model example: page objects are injected as fixtures and own their locators.
 

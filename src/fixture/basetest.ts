@@ -15,7 +15,7 @@ export type POMFixtures = {
   personalDetailsPage: PersonalDetailsPage;
 };
 
-export const fTest = base.extend<POMFixtures>({
+export const test = base.extend<POMFixtures>({
   basePage: async ({ page }, use) => {
     await use(new BasePage(page));
   },
