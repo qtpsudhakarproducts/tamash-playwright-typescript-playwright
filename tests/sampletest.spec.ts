@@ -8,7 +8,7 @@ test('login test using CSS Selectors', { tag: "@sample" }, async ({ page }) => {
     await page.goto("https://qtpsudhakar-vibetestq-hrm.up.railway.app/");
    
     // using page.locator() method to locate the username input field and fill it
-    let txtUserName = page.getByRole("textbox", { name: "Username1" }).describe("User Name Textbox")
+    let txtUserName = page.getByRole("textbox", { name: "Username" }).describe("User Name Textbox")
     await txtUserName.fill("testadmin");
 
     // using page.fill() method to locate the password input field and fill it
@@ -40,7 +40,7 @@ test('login test using CSS Selectors', { tag: "@sample" }, async ({ page }) => {
     // Enter Employee ID
     // Deliberately broken (no placeholder actually exists on this field) — temporary, to exercise
     // a real self-heal against the stable tamash-playwright@0.8.0 release in CI.
-    let txtEmployeeId = page.getByPlaceholder("Employee").describe("Employee Id Textbox");
+    let txtEmployeeId = page.getByText("Employee Id").locator("xpath=../..").getByRole("textbox").describe("Employee Id Textbox");
 
     //create a random number between 10000 and 99999
     let randomNumber = Math.floor(Math.random() * (99999 - 10000 + 1)) + 10000;
