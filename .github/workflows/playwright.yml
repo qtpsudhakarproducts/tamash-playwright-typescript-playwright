@@ -13,12 +13,13 @@ jobs:
     runs-on: ubuntu-latest
     env:
       # Self-healing config — plain values, nothing sensitive here.
+      # Temporarily testing claude-subscription against the real stable tamash-playwright@0.8.0
+      # release (not the beta) end-to-end in CI.
       HEALER_ENABLED: true
-      HEALER_PROVIDER: ollama
-      OLLAMA_MODEL: gpt-oss:120b
+      HEALER_PROVIDER: claude-subscription
+      CLAUDE_SUBSCRIPTION_MODEL: haiku
       APP_BASE_URL: https://qtpsudhakar-vibetestq-hrm.up.railway.app/
-      # The actual credential — set via `gh secret set OLLAMA_API_KEY`, never committed.
-      OLLAMA_API_KEY: ${{ secrets.OLLAMA_API_KEY }}
+      CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
     steps:
     - uses: actions/checkout@v4
     - uses: actions/setup-node@v4

@@ -38,7 +38,9 @@ test('login test using CSS Selectors', { tag: "@sample" }, async ({ page }) => {
     await txtLastName.fill("Doe");
 
     // Enter Employee ID
-    let txtEmployeeId = page.getByText("Employee Id").locator("xpath=../..").getByRole("textbox").describe("Employee Id Textbox");
+    // Deliberately broken (no placeholder actually exists on this field) — temporary, to exercise
+    // a real self-heal against the stable tamash-playwright@0.8.0 release in CI.
+    let txtEmployeeId = page.getByPlaceholder("Employee").describe("Employee Id Textbox");
 
     //create a random number between 10000 and 99999
     let randomNumber = Math.floor(Math.random() * (99999 - 10000 + 1)) + 10000;
