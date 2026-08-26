@@ -22,7 +22,7 @@ test('login test using CSS Selectors', { tag: "@sample" }, async ({ page }) => {
     await expect(page.locator("h6")).toHaveText("Dashboard");
 
     // click on PIM link
-    let lnkPIM = page.getByRole("link", { name: "PIM" }).describe("PIM Link");
+    let lnkPIM = page.getByRole("link", { name: "PIM123" }).describe("PIM Link");
     await lnkPIM.click();
 
     // click on Add Employee link
