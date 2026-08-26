@@ -22,9 +22,16 @@ export default defineConfig({
     baseURL: process.env.APP_BASE_URL ?? 'https://qtpsudhakar-vibetestq-hrm.up.railway.app/',
     trace: 'on-first-retry',
 
-    /* Actions fail fast so the self-healer has real time left within the overall test
-     * timeout to capture an ARIA snapshot, consult the provider, and retry. */
-    actionTimeout: 8000,
+    /* tamash-playwright reuses this same value as the self-healer's own budget for capturing
+     * an ARIA snapshot AND the AI provider call (see resolveActionTimeoutMs in its source) — it
+     * isn't just how fast the original action fails. A subprocess-based provider like
+     * claude-subscription/copilot-subscription spawns a fresh CLI process per call (spin-up +
+     * OAuth validation + the actual request), which measurably doesn't reliably fit in 8s under
+     * CI's shared/constrained runners (confirmed live: ~80% of calls were aborted mid-flight at
+     * 8s, succeeding only when the runner happened to be fast that moment) — misreported by the
+     * provider's own warning as "not authenticated?" when it was actually just timing out. 20s
+     * gives it real room while staying well under the 80s overall test timeout above. */
+    actionTimeout: 20000,
   },
 
   projects: [
