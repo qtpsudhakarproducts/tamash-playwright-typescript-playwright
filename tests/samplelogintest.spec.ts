@@ -8,7 +8,7 @@ test('login test using CSS Selectors', { tag: "@sample" }, async ({ page }) => {
     await page.goto("https://qtpsudhakar-vibetestq-hrm.up.railway.app/");
    
     // using page.locator() method to locate the username input field and fill it
-    let txtUserName = page.getByRole("textbox", { name: "Username1" }).describe("User Name Textbox")
+    let txtUserName = page.getByRole("textbox", { name: "Username" }).describe("User Name Textbox")
     await txtUserName.fill("testadmin");
 
     // using page.fill() method to locate the password input field and fill it
