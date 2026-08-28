@@ -46,6 +46,46 @@ jobs:
         if-no-files-found: ignore
         retention-days: 7
 
+  # Independent of `test` above (no `needs:`, no relation to apply-heals/publish-report) —
+  # deliberately additive rather than a matrix over the existing job, so this can't disturb the
+  # already-working apply-heals/publish-report pipeline, which only ever looks at `test`'s own
+  # artifacts. Exists purely to prove a real API-key provider (not just a subscription-based one)
+  # also heals correctly end-to-end in this CI environment.
+  test-ollama:
+    timeout-minutes: 60
+    runs-on: ubuntu-latest
+    env:
+      HEALER_ENABLED: true
+      HEALER_PROVIDER: ollama
+      OLLAMA_MODEL: gpt-oss:120b
+      APP_BASE_URL: https://qtpsudhakar-vibetestq-hrm.up.railway.app/
+      OLLAMA_API_KEY: ${{ secrets.OLLAMA_API_KEY }}
+    steps:
+    - uses: actions/checkout@v4
+    - uses: actions/setup-node@v4
+      with:
+        node-version: lts/*
+    - name: Install dependencies
+      run: npm ci
+    - name: Install Playwright Browsers
+      run: npx playwright install --with-deps
+    - name: Run Playwright tests
+      run: npx playwright test
+    - uses: actions/upload-artifact@v4
+      if: ${{ !cancelled() }}
+      with:
+        name: playwright-report-ollama
+        path: playwright-report/
+        retention-days: 30
+    - name: Upload self-healing log
+      if: ${{ !cancelled() }}
+      uses: actions/upload-artifact@v4
+      with:
+        name: heals-log-ollama
+        path: .tamash-playwright/heals.jsonl
+        if-no-files-found: ignore
+        retention-days: 7
+
   apply-heals:
     # Only on push — not on pull_request runs, which can come from forks with a read-only
     # GITHUB_TOKEN (so they couldn't open a PR anyway), and where "open a PR to fix this still-open
