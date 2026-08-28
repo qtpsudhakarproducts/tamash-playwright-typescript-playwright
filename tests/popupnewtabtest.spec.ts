@@ -12,13 +12,16 @@ test('a broken locator on a popup opened via context.waitForEvent("page") still 
     await page.getByRole('link', { name: 'OrangeHRM, Inc' }).describe('OrangeHRM, Inc footer link').click();
     const newPage = await newPagePromise;
 
-    // orangehrm.com runs a real cookie-consent banner that can cover the page -- dismiss it if
-    // present, don't fail if it never shows up (already-set cookies, timing).
+    // orangehrm.com runs real interstitials that can cover the page -- a cookie-consent banner,
+    // and (confirmed live, reproducible from a GitHub Actions runner specifically) a promotional
+    // event banner ("Going to HR Florida 2026?..."). Dismiss both if present, don't fail if either
+    // never shows up (already-set cookies, timing, different runner IP).
     await newPage.locator('#CybotCookiebotDialogBodyLevelButtonLevelOptinAllowAll').click({ timeout: 5000 }).catch(() => {});
+    await newPage.getByRole('button', { name: '×' }).click({ timeout: 5000 }).catch(() => {});
 
     // Deliberately broken -- no such id exists on orangehrm.com's real homepage -- to demonstrate
     // a real self-heal on a page opened in a new tab.
-    const txtHomepageEmail = newPage.locator('#doesNotExistEmailField').describe('Your Email Address Field (Homepage)');
+    const txtHomepageEmail = newPage.locator('#doesNotExistEmailField').describe('Your email address field');
     await txtHomepageEmail.fill('test@vibetestq.com');
     await expect(newPage.getByPlaceholder('Your email address')).toHaveValue('test@vibetestq.com');
 
