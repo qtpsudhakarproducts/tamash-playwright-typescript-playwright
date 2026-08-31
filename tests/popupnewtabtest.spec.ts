@@ -21,7 +21,7 @@ test('a broken locator on a popup opened via context.waitForEvent("page") still 
 
     // Deliberately broken -- no such id exists on orangehrm.com's real homepage -- to demonstrate
     // a real self-heal on a page opened in a new tab.
-    const txtHomepageEmail = newPage.locator('#doesNotExistEmailField').describe('Your email address field');
+    const txtHomepageEmail = newPage.getByRole("textbox", { name: "Your email address" }).describe('Your email address field');
     await txtHomepageEmail.fill('test@vibetestq.com');
     await expect(newPage.getByPlaceholder('Your email address')).toHaveValue('test@vibetestq.com');
 
