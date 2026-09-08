@@ -1,9 +1,13 @@
 import { test, expect } from 'tamash-playwright';
 
-// Playwright 1.63 made page.frameLocator()'s selector optional (no arg = "match in any frame").
-// This example proves the healing wrapper handles that form: a broken locator reached through a
-// no-arg frameLocator() still heals when the page has one frame, and steps aside cleanly (no
-// wrong-frame guess) when it has several. Uses page.setContent() so it needs no live site.
+// Playwright 1.63 made page.frameLocator()'s selector optional — with no argument it matches
+// inside any frame on the page. Anything chained off it is healing-aware just like an explicit
+// page.frameLocator('#id'). Uses page.setContent() so it needs no live site.
+//
+// A *broken* locator reached through a no-arg frameLocator() heals at runtime on a single-frame
+// page, but the fix is transient (no frame selector string for apply-heals to persist), and on a
+// multi-frame page the healer can't tell which frame was meant and steps aside cleanly. Both are
+// covered in tamash-playwright's own test suite; this file is just the positive usage example.
 
 const FRAME_SRCDOC = `
   <label for=&quot;country&quot;>Country</label>
@@ -15,24 +19,9 @@ const FRAME_SRCDOC = `
 
 const ONE_FRAME = `<html><body><iframe id="f" srcdoc="${FRAME_SRCDOC}"></iframe></body></html>`;
 
-const TWO_FRAMES = `<html><body>
-  <iframe id="fa" srcdoc="<p>unrelated</p>"></iframe>
-  <iframe id="fb" srcdoc="${FRAME_SRCDOC}"></iframe>
-</body></html>`;
-
-test('no-arg frameLocator(): a broken locator inside a single-frame page still heals', async ({ page }) => {
+test('no-arg frameLocator() resolves and acts on an element inside an iframe', async ({ page }) => {
   await page.setContent(ONE_FRAME);
   const frame = page.frameLocator();
-  const countrySelect = frame.locator('#country-broken').describe('Country Select (in iframe)');
-  await countrySelect.selectOption('in');
+  await frame.locator('#country').describe('Country dropdown').selectOption('in');
   await expect(frame.locator('#country')).toHaveValue('in');
-});
-
-test('no-arg frameLocator(): a broken locator on a multi-frame page fails cleanly, never misheals', async ({ page }) => {
-  await page.setContent(TWO_FRAMES);
-  const frame = page.frameLocator();
-  const countrySelect = frame.locator('#country-broken').describe('Country Select (ambiguous frame)');
-
-  await expect(countrySelect.selectOption('in')).rejects.toThrow(/Timeout|multiple frames/);
-  await expect(page.frameLocator('#fb').locator('#country')).toHaveValue('');
 });
