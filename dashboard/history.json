@@ -1186,5 +1186,1195 @@
     "healedElementsCount": 2,
     "healTokens": 4605,
     "healNeedsReviewCount": 0
+  },
+  {
+    "id": "RUN-1789296952860",
+    "timestamp": "2026-09-13T10:55:52.860Z",
+    "total": 5,
+    "passed": 5,
+    "failed": 0,
+    "skipped": 0,
+    "flaky": 0,
+    "passRate": 100,
+    "durationMs": 57870,
+    "status": "passed",
+    "tests": [
+      {
+        "file": "tests/iframenoargframelocatortest.spec.ts",
+        "line": 22,
+        "title": "chromium › iframenoargframelocatortest.spec.ts › no-arg frameLocator() resolves and acts on an element inside an iframe",
+        "projectName": "chromium",
+        "status": "passed",
+        "expectedStatus": "passed",
+        "duration": 151,
+        "retry": 0,
+        "workerIndex": 0,
+        "flaky": false,
+        "tags": [],
+        "annotations": [],
+        "stdout": [],
+        "stderr": [],
+        "attachments": [],
+        "steps": [
+          {
+            "title": "Before Hooks",
+            "category": "hook",
+            "duration": 266,
+            "status": "passed",
+            "depth": 0
+          },
+          {
+            "title": "Fixture \"browser\"",
+            "category": "fixture",
+            "duration": 187,
+            "status": "passed",
+            "depth": 1
+          },
+          {
+            "title": "Launch browser",
+            "category": "pw:api",
+            "duration": 184,
+            "status": "passed",
+            "depth": 2
+          },
+          {
+            "title": "Fixture \"context\"",
+            "category": "fixture",
+            "duration": 20,
+            "status": "passed",
+            "depth": 1
+          },
+          {
+            "title": "Create context",
+            "category": "pw:api",
+            "duration": 17,
+            "status": "passed",
+            "depth": 2
+          },
+          {
+            "title": "Fixture \"context\"",
+            "category": "fixture",
+            "duration": 1,
+            "status": "passed",
+            "depth": 1,
+            "location": "node_modules/tamash-playwright/src/bindings/index.ts:9"
+          },
+          {
+            "title": "Fixture \"page\"",
+            "category": "fixture",
+            "duration": 46,
+            "status": "passed",
+            "depth": 1
+          },
+          {
+            "title": "Create page",
+            "category": "pw:api",
+            "duration": 35,
+            "status": "passed",
+            "depth": 2,
+            "location": "node_modules/tamash-playwright/src/bindings/locator.binding.ts:633"
+          },
+          {
+            "title": "Fixture \"page\"",
+            "category": "fixture",
+            "duration": 0,
+            "status": "passed",
+            "depth": 1,
+            "location": "node_modules/tamash-playwright/src/bindings/index.ts:9"
+          },
+          {
+            "title": "Set content",
+            "category": "pw:api",
+            "duration": 16,
+            "status": "passed",
+            "depth": 0,
+            "location": "tests/iframenoargframelocatortest.spec.ts:23"
+          },
+          {
+            "title": "Select option",
+            "category": "pw:api",
+            "duration": 44,
+            "status": "passed",
+            "depth": 0,
+            "location": "node_modules/tamash-playwright/src/bindings/locator.binding.ts:490",
+            "locator": "Country dropdown"
+          },
+          {
+            "title": "Expect \"toHaveValue\"",
+            "category": "expect",
+            "duration": 6,
+            "status": "passed",
+            "depth": 0,
+            "location": "tests/iframenoargframelocatortest.spec.ts:26",
+            "locator": "frameLocator().locator('#country')"
+          },
+          {
+            "title": "After Hooks",
+            "category": "hook",
+            "duration": 19,
+            "status": "passed",
+            "depth": 0
+          },
+          {
+            "title": "Fixture \"page\"",
+            "category": "fixture",
+            "duration": 0,
+            "status": "passed",
+            "depth": 1,
+            "location": "node_modules/tamash-playwright/src/bindings/index.ts:9"
+          },
+          {
+            "title": "Fixture \"page\"",
+            "category": "fixture",
+            "duration": 0,
+            "status": "passed",
+            "depth": 1
+          },
+          {
+            "title": "Fixture \"context\"",
+            "category": "fixture",
+            "duration": 0,
+            "status": "passed",
+            "depth": 1,
+            "location": "node_modules/tamash-playwright/src/bindings/index.ts:9"
+          },
+          {
+            "title": "Fixture \"context\"",
+            "category": "fixture",
+            "duration": 10,
+            "status": "passed",
+            "depth": 1
+          },
+          {
+            "title": "Close context",
+            "category": "pw:api",
+            "duration": 5,
+            "status": "passed",
+            "depth": 2
+          }
+        ],
+        "heals": []
+      },
+      {
+        "file": "tests/pomtest.spec.ts",
+        "line": 5,
+        "title": "chromium › pomtest.spec.ts › Create employee using Page Object Model",
+        "projectName": "chromium",
+        "status": "passed",
+        "expectedStatus": "passed",
+        "duration": 29577,
+        "retry": 0,
+        "workerIndex": 0,
+        "flaky": false,
+        "tags": [],
+        "annotations": [
+          {
+            "type": "self-healed",
+            "description": "Recovered using claude-subscription:haiku (getByRole(\"textbox\", { name: \"Username\" }))."
+          },
+          {
+            "type": "llm-tokens-used",
+            "description": "claude-subscription:haiku — fill: 1248 tokens (1217 input + 31 output)"
+          }
+        ],
+        "stdout": [
+          "Navigated to URL /\n",
+          "[self-healer] src/pages/loginpage.ts:11 — locator.fill \"Username Textbox\" -> HEALED [provider=claude-subscription:haiku, vision=no, actionRecovery=no, suggested=\"getByRole(\"textbox\", { name: \"Username\" })\", 1248 tokens (1217 input + 31 output)] — locator.fill: Timeout 20000ms exceeded.\n",
+          "Entered username testadmin\n",
+          "Entered password Vibetestq@123#\n",
+          "Clicked on Login Button\n",
+          "Dashboard Page is displayed\n",
+          "Clicked on PIM Link\n",
+          "PIM Page is displayed\n",
+          "Clicked on Add Button\n",
+          "Entered First Name John\n",
+          "Entered Last Name Smith\n",
+          "Clicked on Save Button\n",
+          "Personal Details Page is displayed\n"
+        ],
+        "stderr": [],
+        "attachments": [
+          {
+            "name": "self-healing-fill",
+            "contentType": "application/json",
+            "skipped": false
+          }
+        ],
+        "steps": [
+          {
+            "title": "Before Hooks",
+            "category": "hook",
+            "duration": 42,
+            "status": "passed",
+            "depth": 0
+          },
+          {
+            "title": "Fixture \"context\"",
+            "category": "fixture",
+            "duration": 4,
+            "status": "passed",
+            "depth": 1
+          },
+          {
+            "title": "Create context",
+            "category": "pw:api",
+            "duration": 3,
+            "status": "passed",
+            "depth": 2
+          },
+          {
+            "title": "Fixture \"context\"",
+            "category": "fixture",
+            "duration": 0,
+            "status": "passed",
+            "depth": 1,
+            "location": "node_modules/tamash-playwright/src/bindings/index.ts:9"
+          },
+          {
+            "title": "Fixture \"page\"",
+            "category": "fixture",
+            "duration": 29,
+            "status": "passed",
+            "depth": 1
+          },
+          {
+            "title": "Create page",
+            "category": "pw:api",
+            "duration": 29,
+            "status": "passed",
+            "depth": 2,
+            "location": "node_modules/tamash-playwright/src/bindings/locator.binding.ts:633"
+          },
+          {
+            "title": "Fixture \"page\"",
+            "category": "fixture",
+            "duration": 0,
+            "status": "passed",
+            "depth": 1,
+            "location": "node_modules/tamash-playwright/src/bindings/index.ts:9"
+          },
+          {
+            "title": "Fixture \"basePage\"",
+            "category": "fixture",
+            "duration": 0,
+            "status": "passed",
+            "depth": 1,
+            "location": "src/fixture/basetest.ts:18"
+          },
+          {
+            "title": "Fixture \"loginPage\"",
+            "category": "fixture",
+            "duration": 1,
+            "status": "passed",
+            "depth": 1,
+            "location": "src/fixture/basetest.ts:18"
+          },
+          {
+            "title": "Fixture \"dashboardPage\"",
+            "category": "fixture",
+            "duration": 0,
+            "status": "passed",
+            "depth": 1,
+            "location": "src/fixture/basetest.ts:18"
+          },
+          {
+            "title": "Fixture \"addEmpPage\"",
+            "category": "fixture",
+            "duration": 0,
+            "status": "passed",
+            "depth": 1,
+            "location": "src/fixture/basetest.ts:18"
+          },
+          {
+            "title": "Fixture \"pimPage\"",
+            "category": "fixture",
+            "duration": 1,
+            "status": "passed",
+            "depth": 1,
+            "location": "src/fixture/basetest.ts:18"
+          },
+          {
+            "title": "Fixture \"personalDetailsPage\"",
+            "category": "fixture",
+            "duration": 0,
+            "status": "passed",
+            "depth": 1,
+            "location": "src/fixture/basetest.ts:18"
+          },
+          {
+            "title": "Navigate",
+            "category": "pw:api",
+            "duration": 494,
+            "status": "passed",
+            "depth": 0,
+            "location": "src/pages/basepage.ts:10"
+          },
+          {
+            "title": "Fill \"testadmin\"",
+            "category": "pw:api",
+            "duration": 20001,
+            "status": "failed",
+            "depth": 0,
+            "error": "TimeoutError: locator.fill: Timeout 20000ms exceeded.\nCall log:\n  - waiting for getByPlaceholder('Username1')\n",
+            "location": "node_modules/tamash-playwright/src/bindings/locator.binding.ts:490",
+            "locator": "Username Textbox"
+          },
+          {
+            "title": "Fill \"testadmin\"",
+            "category": "pw:api",
+            "duration": 8,
+            "status": "passed",
+            "depth": 0,
+            "location": "node_modules/tamash-playwright/src/healer/replay-action.ts:29",
+            "locator": "getByRole('textbox', { name: 'Username' })"
+          },
+          {
+            "title": "Fill \"Vibetestq@123#\"",
+            "category": "pw:api",
+            "duration": 6,
+            "status": "passed",
+            "depth": 0,
+            "location": "node_modules/tamash-playwright/src/bindings/locator.binding.ts:490",
+            "locator": "Password Textbox"
+          },
+          {
+            "title": "Click",
+            "category": "pw:api",
+            "duration": 32,
+            "status": "passed",
+            "depth": 0,
+            "location": "node_modules/tamash-playwright/src/bindings/locator.binding.ts:490",
+            "locator": "Login Button"
+          },
+          {
+            "title": "Expect \"toBeVisible\"",
+            "category": "expect",
+            "duration": 808,
+            "status": "passed",
+            "depth": 0,
+            "location": "src/pages/dashboardpage.ts:18",
+            "locator": "Dashboard Header"
+          },
+          {
+            "title": "Click",
+            "category": "pw:api",
+            "duration": 522,
+            "status": "passed",
+            "depth": 0,
+            "location": "node_modules/tamash-playwright/src/bindings/locator.binding.ts:490",
+            "locator": "PIM Link"
+          },
+          {
+            "title": "Expect \"toBeVisible\"",
+            "category": "expect",
+            "duration": 220,
+            "status": "passed",
+            "depth": 0,
+            "location": "src/pages/pimpage.ts:14",
+            "locator": "PIM Header"
+          },
+          {
+            "title": "Click",
+            "category": "pw:api",
+            "duration": 417,
+            "status": "passed",
+            "depth": 0,
+            "location": "node_modules/tamash-playwright/src/bindings/locator.binding.ts:490",
+            "locator": "Add Button"
+          },
+          {
+            "title": "Fill \"John\"",
+            "category": "pw:api",
+            "duration": 165,
+            "status": "passed",
+            "depth": 0,
+            "location": "node_modules/tamash-playwright/src/bindings/locator.binding.ts:490",
+            "locator": "First Name Textbox"
+          },
+          {
+            "title": "Fill \"Smith\"",
+            "category": "pw:api",
+            "duration": 10,
+            "status": "passed",
+            "depth": 0,
+            "location": "node_modules/tamash-playwright/src/bindings/locator.binding.ts:490",
+            "locator": "Last Name Textbox"
+          },
+          {
+            "title": "Click",
+            "category": "pw:api",
+            "duration": 249,
+            "status": "passed",
+            "depth": 0,
+            "location": "node_modules/tamash-playwright/src/bindings/locator.binding.ts:490",
+            "locator": "Save Button"
+          },
+          {
+            "title": "Expect \"toBeVisible\"",
+            "category": "expect",
+            "duration": 3893,
+            "status": "passed",
+            "depth": 0,
+            "location": "src/pages/personaldetailspage.ts:11",
+            "locator": "Personal Details Header"
+          },
+          {
+            "title": "After Hooks",
+            "category": "hook",
+            "duration": 15,
+            "status": "passed",
+            "depth": 0
+          },
+          {
+            "title": "Fixture \"personalDetailsPage\"",
+            "category": "fixture",
+            "duration": 0,
+            "status": "passed",
+            "depth": 1,
+            "location": "src/fixture/basetest.ts:18"
+          },
+          {
+            "title": "Fixture \"pimPage\"",
+            "category": "fixture",
+            "duration": 0,
+            "status": "passed",
+            "depth": 1,
+            "location": "src/fixture/basetest.ts:18"
+          },
+          {
+            "title": "Fixture \"addEmpPage\"",
+            "category": "fixture",
+            "duration": 0,
+            "status": "passed",
+            "depth": 1,
+            "location": "src/fixture/basetest.ts:18"
+          },
+          {
+            "title": "Fixture \"dashboardPage\"",
+            "category": "fixture",
+            "duration": 0,
+            "status": "passed",
+            "depth": 1,
+            "location": "src/fixture/basetest.ts:18"
+          },
+          {
+            "title": "Fixture \"loginPage\"",
+            "category": "fixture",
+            "duration": 0,
+            "status": "passed",
+            "depth": 1,
+            "location": "src/fixture/basetest.ts:18"
+          },
+          {
+            "title": "Fixture \"basePage\"",
+            "category": "fixture",
+            "duration": 0,
+            "status": "passed",
+            "depth": 1,
+            "location": "src/fixture/basetest.ts:18"
+          },
+          {
+            "title": "Fixture \"page\"",
+            "category": "fixture",
+            "duration": 0,
+            "status": "passed",
+            "depth": 1,
+            "location": "node_modules/tamash-playwright/src/bindings/index.ts:9"
+          },
+          {
+            "title": "Fixture \"page\"",
+            "category": "fixture",
+            "duration": 0,
+            "status": "passed",
+            "depth": 1
+          },
+          {
+            "title": "Fixture \"context\"",
+            "category": "fixture",
+            "duration": 0,
+            "status": "passed",
+            "depth": 1,
+            "location": "node_modules/tamash-playwright/src/bindings/index.ts:9"
+          },
+          {
+            "title": "Fixture \"context\"",
+            "category": "fixture",
+            "duration": 7,
+            "status": "passed",
+            "depth": 1
+          },
+          {
+            "title": "Close context",
+            "category": "pw:api",
+            "duration": 4,
+            "status": "passed",
+            "depth": 2
+          }
+        ],
+        "heals": [
+          {
+            "action": "fill",
+            "kind": "locator",
+            "description": "Username Textbox",
+            "provider": "claude-subscription:haiku",
+            "tokenUsage": {
+              "inputTokens": 1217,
+              "outputTokens": 31,
+              "totalTokens": 1248
+            },
+            "healed": true,
+            "warning": "Recovered using claude-subscription:haiku (getByRole(\"textbox\", { name: \"Username\" })).",
+            "reason": "locator.fill: Timeout 20000ms exceeded.\nCall log:\n  - waiting for getByPlaceholder('Username1')\n",
+            "suggestedSelector": "getByRole(\"textbox\", { name: \"Username\" })",
+            "usedVision": false,
+            "usedActionRecovery": false,
+            "sourceLocation": "src/pages/loginpage.ts:11",
+            "initialSelector": "getByRole('textbox', { name: 'Username' })",
+            "needsReview": false,
+            "attempts": [
+              {
+                "method": "ref",
+                "provider": "claude-subscription:haiku",
+                "succeeded": true,
+                "suggestedSelector": "getByRole(\"textbox\", { name: \"Username\" })",
+                "aiRef": "e19",
+                "aiNearbyRef": "e17",
+                "aiNearbyRole": "text",
+                "scoped": false
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "file": "tests/popupnewtabtest.spec.ts",
+        "line": 11,
+        "title": "chromium › popupnewtabtest.spec.ts › a broken locator on a popup opened via context.waitForEvent(\"page\") still heals",
+        "projectName": "chromium",
+        "status": "passed",
+        "expectedStatus": "passed",
+        "duration": 23080,
+        "retry": 0,
+        "workerIndex": 0,
+        "flaky": false,
+        "tags": [],
+        "annotations": [
+          {
+            "type": "self-healed",
+            "description": "Recovered using claude-subscription:haiku (locator(\"input[name=\\\"email\\\"]\"))."
+          },
+          {
+            "type": "llm-tokens-used",
+            "description": "claude-subscription:haiku — fill: 3382 tokens (3317 input + 65 output)"
+          }
+        ],
+        "stdout": [
+          "[self-healer] tests/popupnewtabtest.spec.ts:26 — locator.fill \"Email Address field\" -> HEALED [provider=claude-subscription:haiku, vision=no, actionRecovery=no, suggested=\"locator(\"input[name=\\\"email\\\"]\")\", 3382 tokens (3317 input + 65 output)] — locator.fill: Timeout 20000ms exceeded.\n"
+        ],
+        "stderr": [],
+        "attachments": [
+          {
+            "name": "self-healing-fill",
+            "contentType": "application/json",
+            "skipped": false
+          }
+        ],
+        "steps": [
+          {
+            "title": "Before Hooks",
+            "category": "hook",
+            "duration": 42,
+            "status": "passed",
+            "depth": 0
+          },
+          {
+            "title": "Fixture \"context\"",
+            "category": "fixture",
+            "duration": 4,
+            "status": "passed",
+            "depth": 1
+          },
+          {
+            "title": "Create context",
+            "category": "pw:api",
+            "duration": 2,
+            "status": "passed",
+            "depth": 2
+          },
+          {
+            "title": "Fixture \"context\"",
+            "category": "fixture",
+            "duration": 0,
+            "status": "passed",
+            "depth": 1,
+            "location": "node_modules/tamash-playwright/src/bindings/index.ts:9"
+          },
+          {
+            "title": "Fixture \"page\"",
+            "category": "fixture",
+            "duration": 30,
+            "status": "passed",
+            "depth": 1
+          },
+          {
+            "title": "Create page",
+            "category": "pw:api",
+            "duration": 29,
+            "status": "passed",
+            "depth": 2,
+            "location": "node_modules/tamash-playwright/src/bindings/locator.binding.ts:633"
+          },
+          {
+            "title": "Fixture \"page\"",
+            "category": "fixture",
+            "duration": 0,
+            "status": "passed",
+            "depth": 1,
+            "location": "node_modules/tamash-playwright/src/bindings/index.ts:9"
+          },
+          {
+            "title": "Navigate",
+            "category": "pw:api",
+            "duration": 469,
+            "status": "passed",
+            "depth": 0,
+            "location": "tests/popupnewtabtest.spec.ts:12"
+          },
+          {
+            "title": "Wait for event \"page\"",
+            "category": "pw:api",
+            "duration": 393,
+            "status": "passed",
+            "depth": 0,
+            "location": "node_modules/tamash-playwright/src/bindings/locator.binding.ts:654"
+          },
+          {
+            "title": "Click",
+            "category": "pw:api",
+            "duration": 230,
+            "status": "passed",
+            "depth": 0,
+            "location": "node_modules/tamash-playwright/src/bindings/locator.binding.ts:490",
+            "locator": "VibeTestQ footer link"
+          },
+          {
+            "title": "Navigate",
+            "category": "pw:api",
+            "duration": 100,
+            "status": "passed",
+            "depth": 0,
+            "location": "tests/popupnewtabtest.spec.ts:20"
+          },
+          {
+            "title": "Fill \"test@vibetestq.com\"",
+            "category": "pw:api",
+            "duration": 20000,
+            "status": "failed",
+            "depth": 0,
+            "error": "TimeoutError: locator.fill: Timeout 20000ms exceeded.\nCall log:\n  - waiting for locator('#doesNotExistEmailField')\n",
+            "location": "node_modules/tamash-playwright/src/bindings/locator.binding.ts:490",
+            "locator": "Email Address field"
+          },
+          {
+            "title": "Fill \"test@vibetestq.com\"",
+            "category": "pw:api",
+            "duration": 14,
+            "status": "passed",
+            "depth": 0,
+            "location": "node_modules/tamash-playwright/src/healer/replay-action.ts:29",
+            "locator": "locator('input[name=\"email\"]')"
+          },
+          {
+            "title": "Expect \"toHaveValue\"",
+            "category": "expect",
+            "duration": 3,
+            "status": "passed",
+            "depth": 0,
+            "location": "tests/popupnewtabtest.spec.ts:28",
+            "locator": "locator('input[name=\"email\"]')"
+          },
+          {
+            "title": "Bring to front",
+            "category": "pw:api",
+            "duration": 1,
+            "status": "passed",
+            "depth": 0,
+            "location": "tests/popupnewtabtest.spec.ts:32"
+          },
+          {
+            "title": "Expect \"toBeVisible\"",
+            "category": "expect",
+            "duration": 3,
+            "status": "passed",
+            "depth": 0,
+            "location": "tests/popupnewtabtest.spec.ts:33",
+            "locator": "getByRole('textbox', { name: 'Username' })"
+          },
+          {
+            "title": "After Hooks",
+            "category": "hook",
+            "duration": 21,
+            "status": "passed",
+            "depth": 0
+          },
+          {
+            "title": "Fixture \"page\"",
+            "category": "fixture",
+            "duration": 0,
+            "status": "passed",
+            "depth": 1,
+            "location": "node_modules/tamash-playwright/src/bindings/index.ts:9"
+          },
+          {
+            "title": "Fixture \"page\"",
+            "category": "fixture",
+            "duration": 0,
+            "status": "passed",
+            "depth": 1
+          },
+          {
+            "title": "Fixture \"context\"",
+            "category": "fixture",
+            "duration": 0,
+            "status": "passed",
+            "depth": 1,
+            "location": "node_modules/tamash-playwright/src/bindings/index.ts:9"
+          },
+          {
+            "title": "Fixture \"context\"",
+            "category": "fixture",
+            "duration": 13,
+            "status": "passed",
+            "depth": 1
+          },
+          {
+            "title": "Close context",
+            "category": "pw:api",
+            "duration": 9,
+            "status": "passed",
+            "depth": 2
+          }
+        ],
+        "heals": [
+          {
+            "action": "fill",
+            "kind": "locator",
+            "description": "Email Address field",
+            "provider": "claude-subscription:haiku",
+            "tokenUsage": {
+              "inputTokens": 3317,
+              "outputTokens": 65,
+              "totalTokens": 3382
+            },
+            "healed": true,
+            "warning": "Recovered using claude-subscription:haiku (locator(\"input[name=\\\"email\\\"]\")).",
+            "reason": "locator.fill: Timeout 20000ms exceeded.\nCall log:\n  - waiting for locator('#doesNotExistEmailField')\n",
+            "suggestedSelector": "locator(\"input[name=\\\"email\\\"]\")",
+            "usedVision": false,
+            "usedActionRecovery": false,
+            "sourceLocation": "tests/popupnewtabtest.spec.ts:26",
+            "initialSelector": "locator('input[name=\"email\"]')",
+            "needsReview": false,
+            "attempts": [
+              {
+                "method": "ref",
+                "provider": "claude-subscription:haiku",
+                "succeeded": true,
+                "suggestedSelector": "locator(\"input[name=\\\"email\\\"]\")",
+                "aiRef": "f1e56",
+                "aiNearbyRef": "f1e55",
+                "aiNearbyText": "Email Address *",
+                "aiNearbyRole": "generic",
+                "scoped": true
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "file": "tests/samplelogintest.spec.ts",
+        "line": 5,
+        "title": "chromium › samplelogintest.spec.ts › login test using CSS Selectors",
+        "projectName": "chromium",
+        "status": "passed",
+        "expectedStatus": "passed",
+        "duration": 1423,
+        "retry": 0,
+        "workerIndex": 0,
+        "flaky": false,
+        "tags": [
+          "@sample"
+        ],
+        "annotations": [],
+        "stdout": [],
+        "stderr": [],
+        "attachments": [],
+        "steps": [
+          {
+            "title": "Before Hooks",
+            "category": "hook",
+            "duration": 48,
+            "status": "passed",
+            "depth": 0
+          },
+          {
+            "title": "Fixture \"context\"",
+            "category": "fixture",
+            "duration": 5,
+            "status": "passed",
+            "depth": 1
+          },
+          {
+            "title": "Create context",
+            "category": "pw:api",
+            "duration": 3,
+            "status": "passed",
+            "depth": 2
+          },
+          {
+            "title": "Fixture \"context\"",
+            "category": "fixture",
+            "duration": 0,
+            "status": "passed",
+            "depth": 1,
+            "location": "node_modules/tamash-playwright/src/bindings/index.ts:9"
+          },
+          {
+            "title": "Fixture \"page\"",
+            "category": "fixture",
+            "duration": 35,
+            "status": "passed",
+            "depth": 1
+          },
+          {
+            "title": "Create page",
+            "category": "pw:api",
+            "duration": 34,
+            "status": "passed",
+            "depth": 2,
+            "location": "node_modules/tamash-playwright/src/bindings/locator.binding.ts:633"
+          },
+          {
+            "title": "Fixture \"page\"",
+            "category": "fixture",
+            "duration": 0,
+            "status": "passed",
+            "depth": 1,
+            "location": "node_modules/tamash-playwright/src/bindings/index.ts:9"
+          },
+          {
+            "title": "Navigate",
+            "category": "pw:api",
+            "duration": 453,
+            "status": "passed",
+            "depth": 0,
+            "location": "tests/samplelogintest.spec.ts:8"
+          },
+          {
+            "title": "Fill \"testadmin\"",
+            "category": "pw:api",
+            "duration": 127,
+            "status": "passed",
+            "depth": 0,
+            "location": "node_modules/tamash-playwright/src/bindings/locator.binding.ts:490",
+            "locator": "User Name Textbox"
+          },
+          {
+            "title": "Fill \"Vibetestq@123#\"",
+            "category": "pw:api",
+            "duration": 9,
+            "status": "passed",
+            "depth": 0,
+            "location": "node_modules/tamash-playwright/src/bindings/locator.binding.ts:490",
+            "locator": "Password Textbox"
+          },
+          {
+            "title": "Click",
+            "category": "pw:api",
+            "duration": 78,
+            "status": "passed",
+            "depth": 0,
+            "location": "node_modules/tamash-playwright/src/bindings/locator.binding.ts:490",
+            "locator": "Login Button"
+          },
+          {
+            "title": "Expect \"toHaveText\"",
+            "category": "expect",
+            "duration": 703,
+            "status": "passed",
+            "depth": 0,
+            "location": "tests/samplelogintest.spec.ts:22",
+            "locator": "locator('h6')"
+          },
+          {
+            "title": "After Hooks",
+            "category": "hook",
+            "duration": 13,
+            "status": "passed",
+            "depth": 0
+          },
+          {
+            "title": "Fixture \"page\"",
+            "category": "fixture",
+            "duration": 0,
+            "status": "passed",
+            "depth": 1,
+            "location": "node_modules/tamash-playwright/src/bindings/index.ts:9"
+          },
+          {
+            "title": "Fixture \"page\"",
+            "category": "fixture",
+            "duration": 0,
+            "status": "passed",
+            "depth": 1
+          },
+          {
+            "title": "Fixture \"context\"",
+            "category": "fixture",
+            "duration": 0,
+            "status": "passed",
+            "depth": 1,
+            "location": "node_modules/tamash-playwright/src/bindings/index.ts:9"
+          },
+          {
+            "title": "Fixture \"context\"",
+            "category": "fixture",
+            "duration": 9,
+            "status": "passed",
+            "depth": 1
+          },
+          {
+            "title": "Close context",
+            "category": "pw:api",
+            "duration": 6,
+            "status": "passed",
+            "depth": 2
+          }
+        ],
+        "heals": []
+      },
+      {
+        "file": "tests/sampletest.spec.ts",
+        "line": 5,
+        "title": "chromium › sampletest.spec.ts › login test using CSS Selectors",
+        "projectName": "chromium",
+        "status": "passed",
+        "expectedStatus": "passed",
+        "duration": 2811,
+        "retry": 0,
+        "workerIndex": 0,
+        "flaky": false,
+        "tags": [
+          "@sample"
+        ],
+        "annotations": [],
+        "stdout": [],
+        "stderr": [],
+        "attachments": [],
+        "steps": [
+          {
+            "title": "Before Hooks",
+            "category": "hook",
+            "duration": 42,
+            "status": "passed",
+            "depth": 0
+          },
+          {
+            "title": "Fixture \"context\"",
+            "category": "fixture",
+            "duration": 3,
+            "status": "passed",
+            "depth": 1
+          },
+          {
+            "title": "Create context",
+            "category": "pw:api",
+            "duration": 3,
+            "status": "passed",
+            "depth": 2
+          },
+          {
+            "title": "Fixture \"context\"",
+            "category": "fixture",
+            "duration": 0,
+            "status": "passed",
+            "depth": 1,
+            "location": "node_modules/tamash-playwright/src/bindings/index.ts:9"
+          },
+          {
+            "title": "Fixture \"page\"",
+            "category": "fixture",
+            "duration": 31,
+            "status": "passed",
+            "depth": 1
+          },
+          {
+            "title": "Create page",
+            "category": "pw:api",
+            "duration": 31,
+            "status": "passed",
+            "depth": 2,
+            "location": "node_modules/tamash-playwright/src/bindings/locator.binding.ts:633"
+          },
+          {
+            "title": "Fixture \"page\"",
+            "category": "fixture",
+            "duration": 0,
+            "status": "passed",
+            "depth": 1,
+            "location": "node_modules/tamash-playwright/src/bindings/index.ts:9"
+          },
+          {
+            "title": "Navigate",
+            "category": "pw:api",
+            "duration": 496,
+            "status": "passed",
+            "depth": 0,
+            "location": "tests/sampletest.spec.ts:8"
+          },
+          {
+            "title": "Fill \"testadmin\"",
+            "category": "pw:api",
+            "duration": 135,
+            "status": "passed",
+            "depth": 0,
+            "location": "node_modules/tamash-playwright/src/bindings/locator.binding.ts:490",
+            "locator": "User Name Textbox"
+          },
+          {
+            "title": "Fill \"Vibetestq@123#\"",
+            "category": "pw:api",
+            "duration": 13,
+            "status": "passed",
+            "depth": 0,
+            "location": "node_modules/tamash-playwright/src/bindings/locator.binding.ts:490",
+            "locator": "Password Textbox"
+          },
+          {
+            "title": "Click",
+            "category": "pw:api",
+            "duration": 72,
+            "status": "passed",
+            "depth": 0,
+            "location": "node_modules/tamash-playwright/src/bindings/locator.binding.ts:490",
+            "locator": "Login Button"
+          },
+          {
+            "title": "Expect \"toHaveText\"",
+            "category": "expect",
+            "duration": 660,
+            "status": "passed",
+            "depth": 0,
+            "location": "tests/sampletest.spec.ts:22",
+            "locator": "locator('h6')"
+          },
+          {
+            "title": "Click",
+            "category": "pw:api",
+            "duration": 408,
+            "status": "passed",
+            "depth": 0,
+            "location": "node_modules/tamash-playwright/src/bindings/locator.binding.ts:490",
+            "locator": "PIM Link"
+          },
+          {
+            "title": "Click",
+            "category": "pw:api",
+            "duration": 546,
+            "status": "passed",
+            "depth": 0,
+            "location": "node_modules/tamash-playwright/src/bindings/locator.binding.ts:490",
+            "locator": "Add Employee Link"
+          },
+          {
+            "title": "Fill \"John\"",
+            "category": "pw:api",
+            "duration": 165,
+            "status": "passed",
+            "depth": 0,
+            "location": "node_modules/tamash-playwright/src/bindings/locator.binding.ts:490",
+            "locator": "First Name Textbox"
+          },
+          {
+            "title": "Fill \"Doe\"",
+            "category": "pw:api",
+            "duration": 6,
+            "status": "passed",
+            "depth": 0,
+            "location": "node_modules/tamash-playwright/src/bindings/locator.binding.ts:490",
+            "locator": "Last Name Textbox"
+          },
+          {
+            "title": "Fill \"19088\"",
+            "category": "pw:api",
+            "duration": 9,
+            "status": "passed",
+            "depth": 0,
+            "location": "node_modules/tamash-playwright/src/bindings/locator.binding.ts:490",
+            "locator": "Employee Id Textbox"
+          },
+          {
+            "title": "Click",
+            "category": "pw:api",
+            "duration": 252,
+            "status": "passed",
+            "depth": 0,
+            "location": "node_modules/tamash-playwright/src/bindings/locator.binding.ts:490",
+            "locator": "Save Button"
+          },
+          {
+            "title": "After Hooks",
+            "category": "hook",
+            "duration": 14,
+            "status": "passed",
+            "depth": 0
+          },
+          {
+            "title": "Fixture \"page\"",
+            "category": "fixture",
+            "duration": 0,
+            "status": "passed",
+            "depth": 1,
+            "location": "node_modules/tamash-playwright/src/bindings/index.ts:9"
+          },
+          {
+            "title": "Fixture \"page\"",
+            "category": "fixture",
+            "duration": 0,
+            "status": "passed",
+            "depth": 1
+          },
+          {
+            "title": "Fixture \"context\"",
+            "category": "fixture",
+            "duration": 0,
+            "status": "passed",
+            "depth": 1,
+            "location": "node_modules/tamash-playwright/src/bindings/index.ts:9"
+          },
+          {
+            "title": "Fixture \"context\"",
+            "category": "fixture",
+            "duration": 6,
+            "status": "passed",
+            "depth": 1
+          },
+          {
+            "title": "Close context",
+            "category": "pw:api",
+            "duration": 3,
+            "status": "passed",
+            "depth": 2
+          }
+        ],
+        "heals": []
+      }
+    ],
+    "healAttempts": 2,
+    "healSucceeded": 2,
+    "healedTestsCount": 2,
+    "healedElementsCount": 2,
+    "healTokens": 4630,
+    "healNeedsReviewCount": 0
   }
 ]
