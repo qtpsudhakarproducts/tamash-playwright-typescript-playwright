@@ -27,6 +27,25 @@ jobs:
         node-version: lts/*
     - name: Install dependencies
       run: npm ci
+    # tamash-playwright-dashboard's own history.json accumulates trend data across runs of the
+    # SAME checkout — worthless in CI where every run starts from a fresh clone, unless something
+    # restores the last published copy first. report-history (see publish-report below) is
+    # already this repo's one durable, cross-run branch, so pull dashboard/history.json from it
+    # before testing, the same clone-or-nothing pattern publish-report uses for _site itself. Only
+    # ever missing on this feature's very first run (or if publish-report has never run on
+    # main/master yet) — that's a fresh trend starting today, not a failure.
+    - name: Restore dashboard history from report-history
+      run: |
+        mkdir -p playwright-dashboard
+        if git clone --depth 1 --branch report-history \
+            "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git" _prev-report-history 2>/dev/null \
+           && [ -f _prev-report-history/dashboard/history.json ]; then
+          cp _prev-report-history/dashboard/history.json playwright-dashboard/history.json
+          echo "Restored prior dashboard history — this run's stats will append to it."
+        else
+          echo "No prior dashboard history found on report-history — starting a fresh trend."
+        fi
+        rm -rf _prev-report-history
     - name: Install Playwright Browsers
       run: npx playwright install --with-deps
     - name: Run Playwright tests
@@ -45,6 +64,17 @@ jobs:
         path: .tamash-playwright/heals.jsonl
         if-no-files-found: ignore
         retention-days: 7
+    # Consumed by publish-report to keep the hosted dashboard's trend continuously growing (see
+    # "Restore dashboard history" above) — only ever meaningful for the branch publish-report
+    # actually deploys from (main/master), but uploaded on every run/branch for consistency; a
+    # feature-branch run's dashboard artifact simply goes unused.
+    - name: Upload self-healing dashboard
+      if: ${{ !cancelled() }}
+      uses: actions/upload-artifact@v4
+      with:
+        name: playwright-dashboard
+        path: playwright-dashboard/
+        retention-days: 30
 
   # Independent of `test` above (no `needs:`, no relation to apply-heals/publish-report) —
   # deliberately additive rather than a matrix over the existing job, so this can't disturb the
@@ -326,6 +356,17 @@ jobs:
       with:
         name: apply-heals-verification-report
         path: run-data/post-healing-run
+      continue-on-error: true
+
+    # From the `test` job's own "Upload self-healing dashboard" step — the tamash-playwright-
+    # dashboard output (index.html + history.json), already carrying every prior run's trend
+    # (restored before testing, see that job). Missing only if `test` itself never got far enough
+    # to run the reporter (e.g. install failure) — compose-report-page.sh handles that absence.
+    - name: Download self-healing dashboard
+      uses: actions/download-artifact@v4
+      with:
+        name: playwright-dashboard
+        path: run-data/dashboard
       continue-on-error: true
 
     # Pulled into its own file rather than inlined — a heredoc's closing delimiter has to sit at

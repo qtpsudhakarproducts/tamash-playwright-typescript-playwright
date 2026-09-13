@@ -18,6 +18,11 @@ export default defineConfig({
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
   reporter: [
+    // A reporter array replaces Playwright's own default entirely — 'list' has to be named
+    // explicitly or CI (and a plain local run) goes silent: no per-test console line, no
+    // [self-healer] output, no final pass/fail summary. Confirmed live: dropping it produced a
+    // run with zero test-level output at all, just the dashboard's own "generated" banner.
+    ['list'],
     ['html'],
     // Trend/history dashboard across runs, incl. self-healing analytics read straight off
     // tamash-playwright's own heal reports — zero config beyond adding the reporter.
