@@ -50,6 +50,19 @@ if [ "$HEALED_COUNT" -gt 0 ]; then
   HEALING_SECTION="<p>$HEALED_COUNT fix(es) applied, $SKIPPED_COUNT skipped.</p><div class=\"fixes\">$FIXES_HTML</div>"
 fi
 
+# tamash-playwright-dashboard's own output (index.html + history.json) — copied to a fixed,
+# non-run-scoped path (unlike history/<run>/ above) because it's a single continuously-growing
+# artifact, not a per-run snapshot: each run's "Restore dashboard history" step (see the test job)
+# seeds it from this exact file before testing, so overwriting it here is what makes the trend
+# persist. history.json itself is never linked directly — only consumed by dashboard/index.html.
+DASHBOARD_AVAILABLE=false
+if [ -f "$DATA_DIR/dashboard/index.html" ]; then
+  mkdir -p "$SITE_DIR/dashboard"
+  cp "$DATA_DIR/dashboard/index.html" "$SITE_DIR/dashboard/index.html"
+  [ -f "$DATA_DIR/dashboard/history.json" ] && cp "$DATA_DIR/dashboard/history.json" "$SITE_DIR/dashboard/history.json"
+  DASHBOARD_AVAILABLE=true
+fi
+
 META="Run <a href=\"$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID\">#$GITHUB_RUN_NUMBER</a> &middot; commit <code>$GITHUB_SHA</code> &middot; $(date -u +"%Y-%m-%d %H:%M UTC")"
 
 STYLE='
@@ -76,13 +89,21 @@ STYLE='
 '
 
 # base: link prefix to this run's assets ("" from inside history/<run>/, "history/<run>/" from root).
+# root_prefix: link prefix to SITE-ROOT assets, i.e. dashboard/ ("" from root itself, "../../" from
+# inside history/<run>/ — two levels up) — separate from `base` because dashboard/ is a single,
+# continuously-growing artifact living at the site root, not nested per-run like initial-run/ etc.
 # history_html: extra section appended near the end — the "past runs" list, root page only.
 render_page() {
   local base="$1"
   local history_html="$2"
+  local root_prefix="$3"
   local post_section="<p class=\"muted\">No healing was needed this run, so there's no post-healing verification to show.</p>"
   if [ "$POST_HEALING_AVAILABLE" = true ]; then
     post_section="<a class=\"button\" href=\"${base}post-healing-run/index.html\">Open the post-healing test report &rarr;</a><p class=\"muted\">Same suite, re-run with <code>HEALER_ENABLED=false</code> &mdash; proves the applied fixes work standalone, not just with the AI safety net still on.</p>"
+  fi
+  local dashboard_section="<p class=\"muted\">Not generated this run.</p>"
+  if [ "$DASHBOARD_AVAILABLE" = true ]; then
+    dashboard_section="<a class=\"button\" href=\"${root_prefix}dashboard/index.html\">Open the self-healing dashboard &rarr;</a><p class=\"muted\">Pass-rate and token-usage trends, per-test history, and every heal event across every run published here &mdash; <a href=\"https://www.npmjs.com/package/tamash-playwright-dashboard\">tamash-playwright-dashboard</a>.</p>"
   fi
   cat <<HTML
 <!doctype html>
@@ -96,6 +117,9 @@ render_page() {
 <body>
 <h1>tamash-playwright self-healing report</h1>
 <p class="meta">$META</p>
+
+<h2>Self-healing dashboard</h2>
+$dashboard_section
 
 <h2>1. Initial execution (healing enabled)</h2>
 <a class="button" href="${base}initial-run/index.html">Open the initial test report &rarr;</a>
@@ -112,7 +136,7 @@ $history_html
 HTML
 }
 
-render_page "" "" > "$RUN_DIR/index.html"
+render_page "" "" "../../" > "$RUN_DIR/index.html"
 
 HISTORY_ITEMS=""
 for d in $(ls -1 "$SITE_DIR/history" | sort -r); do
@@ -124,4 +148,4 @@ for d in $(ls -1 "$SITE_DIR/history" | sort -r); do
 done
 HISTORY_HTML="<h2>Past runs</h2><ul class=\"history-list\">$HISTORY_ITEMS</ul>"
 
-render_page "history/$RUN_ID/" "$HISTORY_HTML" > "$SITE_DIR/index.html"
+render_page "history/$RUN_ID/" "$HISTORY_HTML" "" > "$SITE_DIR/index.html"

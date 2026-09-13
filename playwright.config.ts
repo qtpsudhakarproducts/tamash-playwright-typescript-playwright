@@ -17,14 +17,32 @@ export default defineConfig({
   workers: 1,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
-  reporter: 'html',
+  reporter: [
+    // A reporter array replaces Playwright's own default entirely — 'list' has to be named
+    // explicitly or CI (and a plain local run) goes silent: no per-test console line, no
+    // [self-healer] output, no final pass/fail summary. Confirmed live: dropping it produced a
+    // run with zero test-level output at all, just the dashboard's own "generated" banner.
+    ['list'],
+    ['html'],
+    // Trend/history dashboard across runs, incl. self-healing analytics read straight off
+    // tamash-playwright's own heal reports — zero config beyond adding the reporter.
+    // https://www.npmjs.com/package/tamash-playwright-dashboard
+    ['tamash-playwright-dashboard'],
+  ],
   use: {
     baseURL: process.env.APP_BASE_URL ?? 'https://qtpsudhakar-vibetestq-hrm.up.railway.app/',
     trace: 'on-first-retry',
 
-    /* Actions fail fast so the self-healer has real time left within the overall test
-     * timeout to capture an ARIA snapshot, consult the provider, and retry. */
-    actionTimeout: 8000,
+    /* tamash-playwright reuses this same value as the self-healer's own budget for capturing
+     * an ARIA snapshot AND the AI provider call (see resolveActionTimeoutMs in its source) — it
+     * isn't just how fast the original action fails. A subprocess-based provider like
+     * claude-subscription/copilot-subscription spawns a fresh CLI process per call (spin-up +
+     * OAuth validation + the actual request), which measurably doesn't reliably fit in 8s under
+     * CI's shared/constrained runners (confirmed live: ~80% of calls were aborted mid-flight at
+     * 8s, succeeding only when the runner happened to be fast that moment) — misreported by the
+     * provider's own warning as "not authenticated?" when it was actually just timing out. 20s
+     * gives it real room while staying well under the 80s overall test timeout above. */
+    actionTimeout: 20000,
   },
 
   projects: [

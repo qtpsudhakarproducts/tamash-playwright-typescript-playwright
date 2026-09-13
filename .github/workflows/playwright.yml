@@ -13,12 +13,13 @@ jobs:
     runs-on: ubuntu-latest
     env:
       # Self-healing config — plain values, nothing sensitive here.
+      # Temporarily testing claude-subscription against the real tamash-playwright@0.9.0-beta.1
+      # release end-to-end in CI (heal-log/apply-heals fixes, ref-strategy fix, getDurable()).
       HEALER_ENABLED: true
-      HEALER_PROVIDER: ollama
-      OLLAMA_MODEL: gpt-oss:120b
+      HEALER_PROVIDER: claude-subscription
+      CLAUDE_SUBSCRIPTION_MODEL: haiku
       APP_BASE_URL: https://qtpsudhakar-vibetestq-hrm.up.railway.app/
-      # The actual credential — set via `gh secret set OLLAMA_API_KEY`, never committed.
-      OLLAMA_API_KEY: ${{ secrets.OLLAMA_API_KEY }}
+      CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
     steps:
     - uses: actions/checkout@v4
     - uses: actions/setup-node@v4
@@ -26,6 +27,25 @@ jobs:
         node-version: lts/*
     - name: Install dependencies
       run: npm ci
+    # tamash-playwright-dashboard's own history.json accumulates trend data across runs of the
+    # SAME checkout — worthless in CI where every run starts from a fresh clone, unless something
+    # restores the last published copy first. report-history (see publish-report below) is
+    # already this repo's one durable, cross-run branch, so pull dashboard/history.json from it
+    # before testing, the same clone-or-nothing pattern publish-report uses for _site itself. Only
+    # ever missing on this feature's very first run (or if publish-report has never run on
+    # main/master yet) — that's a fresh trend starting today, not a failure.
+    - name: Restore dashboard history from report-history
+      run: |
+        mkdir -p playwright-dashboard
+        if git clone --depth 1 --branch report-history \
+            "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git" _prev-report-history 2>/dev/null \
+           && [ -f _prev-report-history/dashboard/history.json ]; then
+          cp _prev-report-history/dashboard/history.json playwright-dashboard/history.json
+          echo "Restored prior dashboard history — this run's stats will append to it."
+        else
+          echo "No prior dashboard history found on report-history — starting a fresh trend."
+        fi
+        rm -rf _prev-report-history
     - name: Install Playwright Browsers
       run: npx playwright install --with-deps
     - name: Run Playwright tests
@@ -41,6 +61,92 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: heals-log
+        path: .tamash-playwright/heals.jsonl
+        if-no-files-found: ignore
+        retention-days: 7
+    # Consumed by publish-report to keep the hosted dashboard's trend continuously growing (see
+    # "Restore dashboard history" above) — only ever meaningful for the branch publish-report
+    # actually deploys from (main/master), but uploaded on every run/branch for consistency; a
+    # feature-branch run's dashboard artifact simply goes unused.
+    - name: Upload self-healing dashboard
+      if: ${{ !cancelled() }}
+      uses: actions/upload-artifact@v4
+      with:
+        name: playwright-dashboard
+        path: playwright-dashboard/
+        retention-days: 30
+
+  # Independent of `test` above (no `needs:`, no relation to apply-heals/publish-report) —
+  # deliberately additive rather than a matrix over the existing job, so this can't disturb the
+  # already-working apply-heals/publish-report pipeline, which only ever looks at `test`'s own
+  # artifacts. Exists purely to prove a real API-key provider (not just a subscription-based one)
+  # also heals correctly end-to-end in this CI environment.
+  test-ollama:
+    timeout-minutes: 60
+    runs-on: ubuntu-latest
+    env:
+      HEALER_ENABLED: true
+      HEALER_PROVIDER: ollama
+      OLLAMA_MODEL: gpt-oss:120b
+      APP_BASE_URL: https://qtpsudhakar-vibetestq-hrm.up.railway.app/
+      OLLAMA_API_KEY: ${{ secrets.OLLAMA_API_KEY }}
+    steps:
+    - uses: actions/checkout@v4
+    - uses: actions/setup-node@v4
+      with:
+        node-version: lts/*
+    - name: Install dependencies
+      run: npm ci
+    - name: Install Playwright Browsers
+      run: npx playwright install --with-deps
+    - name: Run Playwright tests
+      run: npx playwright test
+    - uses: actions/upload-artifact@v4
+      if: ${{ !cancelled() }}
+      with:
+        name: playwright-report-ollama
+        path: playwright-report/
+        retention-days: 30
+    - name: Upload self-healing log
+      if: ${{ !cancelled() }}
+      uses: actions/upload-artifact@v4
+      with:
+        name: heals-log-ollama
+        path: .tamash-playwright/heals.jsonl
+        if-no-files-found: ignore
+        retention-days: 7
+
+  # Same independent, additive shape as test-ollama above. tamash needs no key/subscription at
+  # all -- the cheapest possible thing to add real CI coverage for.
+  test-tamash:
+    timeout-minutes: 60
+    runs-on: ubuntu-latest
+    env:
+      HEALER_ENABLED: true
+      HEALER_PROVIDER: tamash
+      APP_BASE_URL: https://qtpsudhakar-vibetestq-hrm.up.railway.app/
+    steps:
+    - uses: actions/checkout@v4
+    - uses: actions/setup-node@v4
+      with:
+        node-version: lts/*
+    - name: Install dependencies
+      run: npm ci
+    - name: Install Playwright Browsers
+      run: npx playwright install --with-deps
+    - name: Run Playwright tests
+      run: npx playwright test
+    - uses: actions/upload-artifact@v4
+      if: ${{ !cancelled() }}
+      with:
+        name: playwright-report-tamash
+        path: playwright-report/
+        retention-days: 30
+    - name: Upload self-healing log
+      if: ${{ !cancelled() }}
+      uses: actions/upload-artifact@v4
+      with:
+        name: heals-log-tamash
         path: .tamash-playwright/heals.jsonl
         if-no-files-found: ignore
         retention-days: 7
@@ -250,6 +356,17 @@ jobs:
       with:
         name: apply-heals-verification-report
         path: run-data/post-healing-run
+      continue-on-error: true
+
+    # From the `test` job's own "Upload self-healing dashboard" step — the tamash-playwright-
+    # dashboard output (index.html + history.json), already carrying every prior run's trend
+    # (restored before testing, see that job). Missing only if `test` itself never got far enough
+    # to run the reporter (e.g. install failure) — compose-report-page.sh handles that absence.
+    - name: Download self-healing dashboard
+      uses: actions/download-artifact@v4
+      with:
+        name: playwright-dashboard
+        path: run-data/dashboard
       continue-on-error: true
 
     # Pulled into its own file rather than inlined — a heredoc's closing delimiter has to sit at
