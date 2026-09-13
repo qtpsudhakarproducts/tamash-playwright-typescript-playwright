@@ -17,7 +17,13 @@ export default defineConfig({
   workers: 1,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
-  reporter: 'html',
+  reporter: [
+    ['html'],
+    // Trend/history dashboard across runs, incl. self-healing analytics read straight off
+    // tamash-playwright's own heal reports — zero config beyond adding the reporter.
+    // https://www.npmjs.com/package/tamash-playwright-dashboard
+    ['tamash-playwright-dashboard'],
+  ],
   use: {
     baseURL: process.env.APP_BASE_URL ?? 'https://qtpsudhakar-vibetestq-hrm.up.railway.app/',
     trace: 'on-first-retry',
