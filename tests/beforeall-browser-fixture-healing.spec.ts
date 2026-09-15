@@ -23,7 +23,7 @@ test('beta smoke: a page built via browser.newContext()/newPage() in beforeAll h
 
   // Deliberately broken -- the real field is named "Username", not "Username1" -- to force a
   // genuine heal, same as this repo's own samplelogintest.spec.ts pattern.
-  const txtUserName = sharedPage.getByRole('textbox', { name: 'Username1' }).describe('User Name Textbox');
+  const txtUserName = sharedPage.getByRole("textbox", { name: "Username" }).describe('User Name Textbox');
   await txtUserName.fill('testadmin');
 
   const txtPassword = sharedPage.locator("input[placeholder='Password']").describe('Password Textbox');
