@@ -23,7 +23,7 @@ test('a broken locator on a popup opened via context.waitForEvent("page") still 
     // demonstrate a real self-heal on a page opened in a new tab. The real field has a visible
     // "Email Address" label that isn't programmatically linked to it (no `for`/`aria-labelledby`),
     // exactly the "nameless field, nearby label" shape this package's structural healing targets.
-    const txtEmail = newPage.locator('#doesNotExistEmailField').describe('Email Address field');
+    const txtEmail = newPage.locator("input[name=\"email\"]").describe('Email Address field');
     await txtEmail.fill('test@vibetestq.com');
     await expect(newPage.locator('input[name="email"]')).toHaveValue('test@vibetestq.com');
 
