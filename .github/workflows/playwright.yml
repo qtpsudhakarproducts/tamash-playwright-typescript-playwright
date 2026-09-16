@@ -48,8 +48,11 @@ jobs:
         rm -rf _prev-report-history
     - name: Install Playwright Browsers
       run: npx playwright install --with-deps
+    # --grep-invert excludes failure-analysis-smoke.spec.ts, which fails on purpose (see
+    # test-failure-analysis-smoke below) — without this, that one intentional red test would mark
+    # this whole job (and the badge) failed, even though nothing here is actually broken.
     - name: Run Playwright tests
-      run: npx playwright test
+      run: npx playwright test --grep-invert "beta smoke: a genuinely-failed assertion"
     - uses: actions/upload-artifact@v4
       if: ${{ !cancelled() }}
       with:
@@ -100,7 +103,7 @@ jobs:
     - name: Install Playwright Browsers
       run: npx playwright install --with-deps
     - name: Run Playwright tests
-      run: npx playwright test
+      run: npx playwright test --grep-invert "beta smoke: a genuinely-failed assertion"
     - uses: actions/upload-artifact@v4
       if: ${{ !cancelled() }}
       with:
@@ -135,7 +138,7 @@ jobs:
     - name: Install Playwright Browsers
       run: npx playwright install --with-deps
     - name: Run Playwright tests
-      run: npx playwright test
+      run: npx playwright test --grep-invert "beta smoke: a genuinely-failed assertion"
     - uses: actions/upload-artifact@v4
       if: ${{ !cancelled() }}
       with:
@@ -150,6 +153,41 @@ jobs:
         path: .tamash-playwright/heals.jsonl
         if-no-files-found: ignore
         retention-days: 7
+
+  # Independent and non-blocking (continue-on-error: true) -- deliberately proves
+  # tamash-playwright@0.13.0-beta.3's new failure-analysis capability (FAILURE_ANALYSIS_ENABLED,
+  # on by default) by running the ONE test designed to genuinely fail every attempt
+  # (failure-analysis-smoke.spec.ts), so the real, final-attempt AI classification actually fires
+  # in CI. Excluded from test/test-ollama/test-tamash above via --grep-invert so this intentional
+  # red result never marks the main jobs (or the repo badge) failed.
+  # Temporary -- remove once CI confirms this and the beta is promoted to stable.
+  test-failure-analysis-smoke:
+    timeout-minutes: 60
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    env:
+      HEALER_ENABLED: true
+      HEALER_PROVIDER: ollama
+      OLLAMA_MODEL: gpt-oss:120b
+      APP_BASE_URL: https://qtpsudhakar-vibetestq-hrm.up.railway.app/
+      OLLAMA_API_KEY: ${{ secrets.OLLAMA_API_KEY }}
+    steps:
+    - uses: actions/checkout@v4
+    - uses: actions/setup-node@v4
+      with:
+        node-version: lts/*
+    - name: Install dependencies
+      run: npm ci
+    - name: Install Playwright Browsers
+      run: npx playwright install --with-deps
+    - name: Run the deliberately-failing failure-analysis smoke test
+      run: npx playwright test --grep "beta smoke: a genuinely-failed assertion"
+    - uses: actions/upload-artifact@v4
+      if: ${{ !cancelled() }}
+      with:
+        name: playwright-report-failure-analysis-smoke
+        path: playwright-report/
+        retention-days: 30
 
   apply-heals:
     # Only on push — not on pull_request runs, which can come from forks with a read-only
