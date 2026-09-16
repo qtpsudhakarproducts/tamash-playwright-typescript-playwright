@@ -246,10 +246,14 @@ jobs:
     - name: Install Playwright Browsers
       if: steps.check.outputs.changed == 'true'
       run: npx playwright install --with-deps
+    # --grep-invert excludes failure-analysis-smoke.spec.ts (see test/test-ollama/test-tamash
+    # above) — without it, this verification run always fails on that one intentionally-failing
+    # test regardless of whether the actual healed selector works, producing a false "verification
+    # FAILED" label on the PR below.
     - name: Verify the healed selectors work on their own
       id: verify
       if: steps.check.outputs.changed == 'true'
-      run: npx playwright test
+      run: 'npx playwright test --grep-invert "beta smoke: a genuinely-failed assertion"'
       continue-on-error: true
       env:
         HEALER_ENABLED: false
