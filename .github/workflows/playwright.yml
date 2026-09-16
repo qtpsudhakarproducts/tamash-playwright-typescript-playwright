@@ -52,7 +52,7 @@ jobs:
     # test-failure-analysis-smoke below) — without this, that one intentional red test would mark
     # this whole job (and the badge) failed, even though nothing here is actually broken.
     - name: Run Playwright tests
-      run: npx playwright test --grep-invert "beta smoke: a genuinely-failed assertion"
+      run: 'npx playwright test --grep-invert "beta smoke: a genuinely-failed assertion"'
     - uses: actions/upload-artifact@v4
       if: ${{ !cancelled() }}
       with:
@@ -103,7 +103,7 @@ jobs:
     - name: Install Playwright Browsers
       run: npx playwright install --with-deps
     - name: Run Playwright tests
-      run: npx playwright test --grep-invert "beta smoke: a genuinely-failed assertion"
+      run: 'npx playwright test --grep-invert "beta smoke: a genuinely-failed assertion"'
     - uses: actions/upload-artifact@v4
       if: ${{ !cancelled() }}
       with:
@@ -138,7 +138,7 @@ jobs:
     - name: Install Playwright Browsers
       run: npx playwright install --with-deps
     - name: Run Playwright tests
-      run: npx playwright test --grep-invert "beta smoke: a genuinely-failed assertion"
+      run: 'npx playwright test --grep-invert "beta smoke: a genuinely-failed assertion"'
     - uses: actions/upload-artifact@v4
       if: ${{ !cancelled() }}
       with:
@@ -181,7 +181,7 @@ jobs:
     - name: Install Playwright Browsers
       run: npx playwright install --with-deps
     - name: Run the deliberately-failing failure-analysis smoke test
-      run: npx playwright test --grep "beta smoke: a genuinely-failed assertion"
+      run: 'npx playwright test --grep "beta smoke: a genuinely-failed assertion"'
     - uses: actions/upload-artifact@v4
       if: ${{ !cancelled() }}
       with:
