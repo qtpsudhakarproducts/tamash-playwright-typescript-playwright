@@ -1,11 +1,10 @@
-import { test as base } from 'tamash-playwright';
+import { test as base, expect } from 'tamash-playwright';
 import { BasePage } from '../pages/basepage';
 import LoginPage from '../pages/loginpage';
 import DashboardPage from '../pages/dashboardpage';
 import PIMPage from '../pages/pimpage';
 import AddEmployeePage from '../pages/addemppage';
 import PersonalDetailsPage from '../pages/personaldetailspage';
-
 export type POMFixtures = {
   basePage: BasePage;
   loginPage: LoginPage;
@@ -15,6 +14,7 @@ export type POMFixtures = {
   personalDetailsPage: PersonalDetailsPage;
 };
 
+export { expect };
 export const test = base.extend<POMFixtures>({
   basePage: async ({ page }, use) => {
     await use(new BasePage(page));

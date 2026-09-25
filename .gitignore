@@ -4,3 +4,5 @@ test-results/
 playwright-report/
 playwright-dashboard/
 .tamash-playwright/
+# Playwright CLI output (may contain credentials)
+.playwright-cli/

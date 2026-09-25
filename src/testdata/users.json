@@ -1,0 +1,12 @@
+{
+    "userCreds": {
+        "adminCreds": {
+            "username": "testadmin",
+            "password": "Vibetestq@123#"
+        },
+        "guestCreds": {
+            "username": "testuser",
+            "password": "Vibetestq@123#"
+        }
+    }
+}
